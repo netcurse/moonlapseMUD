@@ -1,0 +1,5 @@
+Client/.venv
+Client/__pycache__
+Server/bin
+Server/obj
+.vs
