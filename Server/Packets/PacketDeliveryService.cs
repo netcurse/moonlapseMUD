@@ -18,7 +18,12 @@ namespace Moonlapse.Server.Packets {
         public async Task<Packet> ReceivePacketAsync(NetworkStream stream) {
             var maxBufferSize = 1500;
             var data = new byte[maxBufferSize];
-            var bytesRead = await stream.ReadAsync(data);
+            int bytesRead;
+            try {
+                bytesRead = await stream.ReadAsync(data);
+            } catch (IOException) {
+                throw new SocketClosedException();
+            }
             if (bytesRead == 0) {
                 throw new SocketClosedException();
             }
