@@ -35,7 +35,6 @@ namespace Moonlapse.Server {
         public async Task StartAsync() {
             Connected = true;
             await ListenLoopAsync();
-            ChangeState<EntryState>();
         }
 
         public void ChangeState<T>() where T : notnull, ProtocolState {
@@ -110,8 +109,6 @@ namespace Moonlapse.Server {
                     var nextPacket = await ReadNextPacketAsync();
                     ProtocolState.DispatchPacket(this, nextPacket);
                 } catch (SocketClosedException) {
-                    End();
-                } catch (IOException) {
                     End();
                 } catch (Exception ex) {
                     Log.Error($"Protocol {client.Client.Handle} received exception in {ProtocolState.GetType()} state: {ex}");
