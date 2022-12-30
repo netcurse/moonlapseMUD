@@ -1,14 +1,16 @@
 # MoonlapseMUD
-This is a reboot of the MoonlapseMUD project, which was originally written pure Python. The server is now written in C# for a variety of reasons, and the client is rewritten in Python.
+Welcome to MoonlapseMUD: an open-source, multi-user dungeon designed to play directly in any terminal.
 
-# Quick start guide
-## Clone the repo
+For more information, see the [website](https://moonlapse.net).
+
+## Quick start for developers
+### Clone the repo
 ```bash
 git clone https://github.com/netcurse/moonlapseMUD
 cd moonlapseMUD
 ```
 
-## Setup the client virtual environment
+### Setup the client virtual environment
 ```bash
 cd Client/
 python -m venv ./.venv
@@ -16,7 +18,7 @@ source ./.venv/bin/activate # (or for Windows: .\.venv\Scripts\activate)
 pip install -r requirements.txt
 ```
 
-## Setting up VS Code for editing the client code
+### Setting up VS Code for editing the client code
 Firstly, you should get the ms-python.python extension for VS Code. Without it, life will suck.
 
 You might get an annoying error when editing client python files in VS Code if you have Visual Studio installed. It will say something like `__main__.py" is overriding the stdlib module "__main__"`. To fix this, simply add the following to your `settings.json` file in VS Code (this will already be there if you kept the `settings.json` from the cloned repository):
@@ -27,7 +29,7 @@ You might get an annoying error when editing client python files in VS Code if y
 }
 ```
 
-## Making changes to the packets
+### Making changes to the packets
 This project uses `protobuf` to define the packets that are sent between the client and server. The packets are defined in the root directory's `packets.proto`.
 
 Every time you make a change to one of the packets in `packets.proto`, you need to run `protoc` to generate the C# and Python code. 
@@ -57,36 +59,37 @@ Client/packets_pb2.py
 Client/packets_pb2.pyi
 ```
 
-# Notes
-## The tick loop
+## Notes for developers
+### The tick loop
 The server has a tick loop that runs according to the `tickRate` variable in `Server/Server.cs`. This variable represents how many times per second the server will tick. The server ticks by calling the `TickAsync` method in each protocol (these are all run at the same time). The server tick should run at a constant rate, but if the server is under heavy load, the tick rate will drop.
 
-The protocol's `TickAsync` function should **only** ever be called from the server's tick loop. It should never be called from anywhere else. The `TickAsync` function dequeues a packet from each sender who has sent us a packet and processes it according to the protocol's state.
+The protocol's `TickAsync` function should **only** ever be called from the server's tick loop. It should never be called from anywhere else. The `TickAsync` function dequeues packets from each protocol's outbound queue, and gets the recipients to process according to their [state](#state-machine).
 
-## State machine
-The server's protocol uses a state pattern, so the `state` member variable is a reference to a method that is invoked when the server ticks and processes a packet.
+### State machine
+The server's protocol uses a state pattern, so the `ProtocolState` member variable is a reference to an object that can process packets on each server tick.
 
-To set the protocol's state, simply write `state = xyzState` where `xyzState` is a reference to another method. These methods need to have the signature 
+To set the state of a protocol called `protocol`, to a state called `ExampleState`, simply write
 ```csharp
-bool xyzState(Protocol sender, Packet packet)
+protocol.ChangeState<ExampleState>();
 ``` 
-and return `true` if the packet was handled, or `false` if it wasn't.
+If there is a corresponding class located in `ProtocolStates/ExampleState.cs` which inherits from `ProtocolState`, then the protocol's state will be changed to an instance of that class.
 
-## Sending packets to other protocols
+These state classes should also subscribe to events defined in the parent `ProtocolState` class's `DispatchPacket` function. Once subscribed, the handler will be called whenever a packet is received by the protocol.
+
+### Sending packets to other protocols
 To send a packet `packet` to another protocol `other` for processing, simply write 
 ```csharp
-queueOutboundPacket(other, packet);
+QueueOutboundPacket(other, packet);
 ```
 
 This will schedule your packet to be sent to the receiving protocol in a future tick (depending on how many other packets you've sent to this protocol recently).
 
 When the receiving protocol gets this packet, it will be processed straight away according to its state in the `packetReceived` method.
 
-To send a packet to all protocols, use the `broadcast` method, and consider using the optional `includeSelf` parameter which is `false` by default.
+To send a packet to all protocols, use the `Broadcast` method, and consider using the optional `includeSelf` parameter which is `false` by default.
 
-## Sending packets directly to the client
-To send a packet `packet` directly to the protocol's client, simply use the `sendClient` method:
+### Sending packets directly to the client
+To send a packet `packet` directly to the client of a protocol `proto`, simply use:
 ```csharp
-sendClient(packet);
+proto.QueueOutboundPacket(proto, packet);
 ```
-This function should **only** ever be called from within one of the [state](#state-machine) functions to keep packet sending to occur only during each tick.

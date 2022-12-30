@@ -53,7 +53,12 @@ namespace Moonlapse.Server {
 
                 if (packetsToSend.Count > 0) {
                     var packetToSend = packetsToSend.Dequeue();
-                    recipient.ProtocolState.DispatchPacket(this, packetToSend);
+
+                    if (recipient == this) {
+                        await SendClientAsync(packetToSend);
+                    } else {
+                        recipient.ProtocolState.DispatchPacket(this, packetToSend);
+                    }
 
                     // Remove the recipient from the outboundPacketQueues dictionary if the queue has become empty
                     if (packetsToSend.Count <= 0) {
@@ -75,11 +80,7 @@ namespace Moonlapse.Server {
             }
         }
 
-        public void SendClient(Packet packet) {
-            SendClientAsync(packet);
-        }
-
-        public async Task SendClientAsync(Packet packet) {
+        async Task SendClientAsync(Packet packet) {
             try {
                 var stream = client.GetStream();
                 await packetDeliveryService.SendPacketAsync(client.GetStream(), packet);
@@ -92,7 +93,7 @@ namespace Moonlapse.Server {
         /// Gets this protocol to add a packet to its outbound queue. Use this function to send a packet <c>packet</c> to another protocol <c>other</c>:
         /// This will schedule the packet for dispatch in a future tick, which in turn, will call the receiving protocol's packetReceived method for processing.
         /// </summary>
-        void QueueOutboundPacket(Protocol recipient, Packet packet) {
+        public void QueueOutboundPacket(Protocol recipient, Packet packet) {
             if (outboundPacketQueues.TryGetValue(recipient, out CircularQueue<Packet>? value)) {
                 value!.Enqueue(packet);
             }

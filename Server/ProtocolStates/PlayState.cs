@@ -22,7 +22,7 @@ namespace Moonlapse.Server.ProtocolStates {
             }
             else {
                 // If this came from someone else, send it just to our client
-                protocol.SendClient(packet);
+                protocol.QueueOutboundPacket(protocol, packet);
             }
         }
     }
