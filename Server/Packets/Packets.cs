@@ -24,17 +24,20 @@ namespace Moonlapse.Server.Packets {
     static PacketsReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "Cg1wYWNrZXRzLnByb3RvEgdwYWNrZXRzIjEKC0xvZ2luUGFja2V0EhAKCHVz",
-            "ZXJuYW1lGAEgASgJEhAKCHBhc3N3b3JkGAIgASgJIjQKDlJlZ2lzdGVyUGFj",
-            "a2V0EhAKCHVzZXJuYW1lGAEgASgJEhAKCHBhc3N3b3JkGAIgASgJIisKCkNo",
-            "YXRQYWNrZXQSDAoEbmFtZRgBIAEoCRIPCgdtZXNzYWdlGAIgASgJIokBCgZQ",
-            "YWNrZXQSJQoFbG9naW4YASABKAsyFC5wYWNrZXRzLkxvZ2luUGFja2V0SAAS",
-            "KwoIcmVnaXN0ZXIYAiABKAsyFy5wYWNrZXRzLlJlZ2lzdGVyUGFja2V0SAAS",
-            "IwoEY2hhdBgDIAEoCzITLnBhY2tldHMuQ2hhdFBhY2tldEgAQgYKBHR5cGVC",
-            "G6oCGE1vb25sYXBzZS5TZXJ2ZXIuUGFja2V0c2IGcHJvdG8z"));
+            "Cg1wYWNrZXRzLnByb3RvEgdwYWNrZXRzGiBnb29nbGUvcHJvdG9idWYvZGVz",
+            "Y3JpcHRvci5wcm90byIxCgtMb2dpblBhY2tldBIQCgh1c2VybmFtZRgBIAEo",
+            "CRIQCghwYXNzd29yZBgCIAEoCSI0Cg5SZWdpc3RlclBhY2tldBIQCgh1c2Vy",
+            "bmFtZRgBIAEoCRIQCghwYXNzd29yZBgCIAEoCSIrCgpDaGF0UGFja2V0EgwK",
+            "BG5hbWUYASABKAkSDwoHbWVzc2FnZRgCIAEoCSKbAQoGUGFja2V0EisKBWxv",
+            "Z2luGAEgASgLMhQucGFja2V0cy5Mb2dpblBhY2tldEIE+PAEAUgAEjEKCHJl",
+            "Z2lzdGVyGAIgASgLMhcucGFja2V0cy5SZWdpc3RlclBhY2tldEIE+PAEAUgA",
+            "EikKBGNoYXQYAyABKAsyEy5wYWNrZXRzLkNoYXRQYWNrZXRCBPjwBABIAEIG",
+            "CgR0eXBlOjEKCWVuY3J5cHRlZBIdLmdvb2dsZS5wcm90b2J1Zi5GaWVsZE9w",
+            "dGlvbnMYj04gASgIQhuqAhhNb29ubGFwc2UuU2VydmVyLlBhY2tldHNiBnBy",
+            "b3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
+          new pbr::FileDescriptor[] { global::Google.Protobuf.Reflection.DescriptorReflection.Descriptor, },
+          new pbr::GeneratedClrTypeInfo(null, new pb::Extension[] { PacketsExtensions.Encrypted }, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.LoginPacket), global::Moonlapse.Server.Packets.LoginPacket.Parser, new[]{ "Username", "Password" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.RegisterPacket), global::Moonlapse.Server.Packets.RegisterPacket.Parser, new[]{ "Username", "Password" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.ChatPacket), global::Moonlapse.Server.Packets.ChatPacket.Parser, new[]{ "Name", "Message" }, null, null, null, null),
@@ -44,6 +47,12 @@ namespace Moonlapse.Server.Packets {
     #endregion
 
   }
+  /// <summary>Holder for extension identifiers generated from the top level of packets.proto</summary>
+  public static partial class PacketsExtensions {
+    public static readonly pb::Extension<global::Google.Protobuf.Reflection.FieldOptions, bool> Encrypted =
+      new pb::Extension<global::Google.Protobuf.Reflection.FieldOptions, bool>(9999, pb::FieldCodec.ForBool(79992, false));
+  }
+
   #region Messages
   public sealed partial class LoginPacket : pb::IMessage<LoginPacket>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE

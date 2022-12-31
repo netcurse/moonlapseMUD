@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Google.Protobuf;
+using Google.Protobuf.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using Moonlapse.Server.Packets;
 using Moonlapse.Server.ProtocolStates;
 using Moonlapse.Server.Serializers;
@@ -6,6 +8,7 @@ using Moonlapse.Server.Utils;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -52,9 +55,11 @@ namespace Moonlapse.Server {
 
                 if (packetsToSend.Count > 0) {
                     var packetToSend = packetsToSend.Dequeue();
+                    var packetConfig = new PacketConfig();
+                    packetConfig.AESEncrypted = PacketConfig.HasFlag(packetToSend, PacketsExtensions.Encrypted);
 
                     if (recipient == this) {
-                        await SendClientAsync(packetToSend);
+                        await SendClientAsync(packetToSend, packetConfig);
                     } else {
                         recipient.ProtocolState.DispatchPacket(this, packetToSend);
                     }
@@ -79,10 +84,10 @@ namespace Moonlapse.Server {
             }
         }
 
-        async Task SendClientAsync(Packet packet) {
+        async Task SendClientAsync(Packet packet, PacketConfig? packetConfig = default) { 
             try {
                 var stream = client.GetStream();
-                await packetDeliveryService.SendPacketAsync(client.GetStream(), packet);
+                await packetDeliveryService.SendPacketAsync(client.GetStream(), packet, packetConfig);
             } catch (InvalidOperationException) {
                 throw new SocketClosedException();
             }

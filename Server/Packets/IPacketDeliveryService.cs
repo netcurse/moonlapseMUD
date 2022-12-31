@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Moonlapse.Server.Packets {
     public interface IPacketDeliveryService {
-        public Task SendPacketAsync(NetworkStream stream, Packet packet);
+        public Task SendPacketAsync(NetworkStream stream, Packet packet, PacketConfig? config = default);
         public Task<Packet> ReceivePacketAsync(NetworkStream stream);
     }
 }

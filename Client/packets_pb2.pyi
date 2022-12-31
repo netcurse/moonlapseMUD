@@ -6,6 +6,8 @@ protoc -I="." --python_out="../Client" --mypy_out="../Client" --csharp_out="../S
 """
 import builtins
 import google.protobuf.descriptor
+import google.protobuf.descriptor_pb2
+import google.protobuf.internal.extension_dict
 import google.protobuf.message
 import sys
 
@@ -95,3 +97,6 @@ class Packet(google.protobuf.message.Message):
     def WhichOneof(self, oneof_group: typing_extensions.Literal["type", b"type"]) -> typing_extensions.Literal["login", "register", "chat"] | None: ...
 
 global___Packet = Packet
+
+ENCRYPTED_FIELD_NUMBER: builtins.int
+encrypted: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.FieldOptions, builtins.bool]

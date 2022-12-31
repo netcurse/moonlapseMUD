@@ -5,6 +5,11 @@ syntax = "proto3";
 package packets;
 option csharp_namespace = "Moonlapse.Server.Packets";
 
+import "google/protobuf/descriptor.proto";
+extend google.protobuf.FieldOptions {
+    bool encrypted = 9999;
+}
+
 message LoginPacket {
     string username = 1;
     string password = 2;
@@ -22,8 +27,8 @@ message ChatPacket {
 
 message Packet {
     oneof type {
-        LoginPacket login = 1;
-        RegisterPacket register = 2;
-        ChatPacket chat = 3;
+        LoginPacket login = 1 [(encrypted) = true];
+        RegisterPacket register = 2 [(encrypted) = true];
+        ChatPacket chat = 3 [(encrypted) = false];
     }
 }
