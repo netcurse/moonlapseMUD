@@ -15,6 +15,8 @@ class Client:
         self.read_thread = threading.Thread(target=self.read)
         self.write_thread = threading.Thread(target=self.write)
         self.username: str = input("Please enter your name: ")
+        self.aes_key: bytes = crypto.gen_aes_key() # TODO: Make crypto a class which can store the server's public key and the client's AES key
+        self.server_rsa_public_key: bytes = b""
 
     def start(self):
         self.sock.connect(self.address)
@@ -31,10 +33,8 @@ class Client:
             raise socket.error("Socket connection broken")
 
         packet_config = PacketConfig.from_byte(header[0])
-        if packet_config.rsa_encrypted:
-            data = crypto.rsa_decrypt(data)
         if packet_config.aes_encrypted:
-            data = crypto.aes_decrypt(data)
+            data = crypto.aes_decrypt(data, self.aes_key)
 
         packet = pack.Packet.FromString(data)
         return packet
@@ -43,11 +43,23 @@ class Client:
         if config is None:
             config = PacketConfig()
 
-        if PacketConfig.has_flag(packet, pack.encrypted):
+        # Ensure the AESEncrypted flag is set on the header if the packet type demands encryption
+        # (Unless the packet is an AESKey packet, in which case it needs to be RSA)
+        if PacketConfig.has_flag(packet, pack.encrypted) and not packet.HasField("aes_key"):
+            config.aes_encrypted = True
+            config.rsa_encrypted = False
+        elif packet.HasField("aes_key"):
+            config.aes_encrypted = False
             config.rsa_encrypted = True
         
         header: int = config.to_byte()
+
         data: bytes = packet.SerializeToString()
+        if config.rsa_encrypted:
+            # TODO: Make crypto a class which can store the server's public key and the client's AES key
+            data = crypto.rsa_encrypt(data, self.server_rsa_public_key)
+        elif config.aes_encrypted:
+            data = crypto.aes_encrypt(data, self.aes_key)
         self.sock.send(header.to_bytes(1, "big"))
         self.sock.send(data)
 
@@ -56,7 +68,17 @@ class Client:
             try:
                 packet = self.receive_packet()
 
-                if packet.HasField("chat"):
+                if packet.HasField("public_rsa_key"):
+                    print("Received public RSA key")
+                    print(packet.public_rsa_key.key)
+                    self.server_rsa_public_key = packet.public_rsa_key.key
+
+                    aes_key_packet = pack.Packet()
+                    aes_key_packet.aes_key.key = self.aes_key
+                    self.send_packet(aes_key_packet)
+                    self.login()
+
+                elif packet.HasField("chat"):
                     print(f"{packet.chat.name}: {packet.chat.message}")
                 elif packet.HasField("login"):
                     print("Received a login packet")
@@ -70,11 +92,6 @@ class Client:
                 self.stop()
         
     def write(self):
-        login_packet = pack.Packet()
-        login_packet.login.username = self.username
-        login_packet.login.password = "password123"
-        self.send_packet(login_packet, PacketConfig(aes_encrypted=True))
-        
         while self.running:
             try:
                 packet = pack.Packet()
@@ -85,6 +102,12 @@ class Client:
                 print("Error receiving data")
                 print(e)
                 self.stop()
+
+    def login(self):
+        login_packet = pack.Packet()
+        login_packet.login.username = self.username
+        login_packet.login.password = "password123"
+        self.send_packet(login_packet)
 
     def stop(self):
         self.running = False

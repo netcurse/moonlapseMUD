@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import descriptor_pb2 as google_dot_protobuf_dot_descriptor__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rpackets.proto\x12\x07packets\x1a google/protobuf/descriptor.proto\"1\n\x0bLoginPacket\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"4\n\x0eRegisterPacket\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"+\n\nChatPacket\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x9b\x01\n\x06Packet\x12+\n\x05login\x18\x01 \x01(\x0b\x32\x14.packets.LoginPacketB\x04\xf8\xf0\x04\x01H\x00\x12\x31\n\x08register\x18\x02 \x01(\x0b\x32\x17.packets.RegisterPacketB\x04\xf8\xf0\x04\x01H\x00\x12)\n\x04\x63hat\x18\x03 \x01(\x0b\x32\x13.packets.ChatPacketB\x04\xf8\xf0\x04\x00H\x00\x42\x06\n\x04type:1\n\tencrypted\x12\x1d.google.protobuf.FieldOptions\x18\x8fN \x01(\x08\x42\x1b\xaa\x02\x18Moonlapse.Server.Packetsb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rpackets.proto\x12\x07packets\x1a google/protobuf/descriptor.proto\"1\n\x0bLoginPacket\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"4\n\x0eRegisterPacket\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"+\n\nChatPacket\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"!\n\x12PublicRSAKeyPacket\x12\x0b\n\x03key\x18\x01 \x01(\x0c\"\x1b\n\x0c\x41\x45SKeyPacket\x12\x0b\n\x03key\x18\x01 \x01(\x0c\"\x88\x02\n\x06Packet\x12+\n\x05login\x18\x01 \x01(\x0b\x32\x14.packets.LoginPacketB\x04\xf8\xf0\x04\x01H\x00\x12\x31\n\x08register\x18\x02 \x01(\x0b\x32\x17.packets.RegisterPacketB\x04\xf8\xf0\x04\x01H\x00\x12)\n\x04\x63hat\x18\x03 \x01(\x0b\x32\x13.packets.ChatPacketB\x04\xf8\xf0\x04\x00H\x00\x12;\n\x0epublic_rsa_key\x18\x04 \x01(\x0b\x32\x1b.packets.PublicRSAKeyPacketB\x04\xf8\xf0\x04\x00H\x00\x12.\n\x07\x61\x65s_key\x18\x05 \x01(\x0b\x32\x15.packets.AESKeyPacketB\x04\xf8\xf0\x04\x01H\x00\x42\x06\n\x04type:1\n\tencrypted\x12\x1d.google.protobuf.FieldOptions\x18\x8fN \x01(\x08\x42\x1b\xaa\x02\x18Moonlapse.Server.Packetsb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'packets_pb2', globals())
@@ -29,12 +29,20 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _PACKET.fields_by_name['register']._serialized_options = b'\370\360\004\001'
   _PACKET.fields_by_name['chat']._options = None
   _PACKET.fields_by_name['chat']._serialized_options = b'\370\360\004\000'
+  _PACKET.fields_by_name['public_rsa_key']._options = None
+  _PACKET.fields_by_name['public_rsa_key']._serialized_options = b'\370\360\004\000'
+  _PACKET.fields_by_name['aes_key']._options = None
+  _PACKET.fields_by_name['aes_key']._serialized_options = b'\370\360\004\001'
   _LOGINPACKET._serialized_start=60
   _LOGINPACKET._serialized_end=109
   _REGISTERPACKET._serialized_start=111
   _REGISTERPACKET._serialized_end=163
   _CHATPACKET._serialized_start=165
   _CHATPACKET._serialized_end=208
-  _PACKET._serialized_start=211
-  _PACKET._serialized_end=366
+  _PUBLICRSAKEYPACKET._serialized_start=210
+  _PUBLICRSAKEYPACKET._serialized_end=243
+  _AESKEYPACKET._serialized_start=245
+  _AESKEYPACKET._serialized_end=272
+  _PACKET._serialized_start=275
+  _PACKET._serialized_end=539
 # @@protoc_insertion_point(module_scope)

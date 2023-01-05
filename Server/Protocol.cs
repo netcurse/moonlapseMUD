@@ -6,6 +6,7 @@ using Moonlapse.Server.ProtocolStates;
 using Moonlapse.Server.Serializers;
 using Moonlapse.Server.Utils;
 using Serilog;
+using Serilog.Debugging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -26,6 +27,7 @@ namespace Moonlapse.Server {
         readonly IPacketDeliveryService packetDeliveryService;
         readonly TcpClient client;
         readonly Server server;
+        byte[] aesPrivateKey; // TODO: Make crypto a class which can store the server's public key and the client's AES key
 
         public Protocol(TcpClient client, Server server) {
             this.client = client;
@@ -37,10 +39,12 @@ namespace Moonlapse.Server {
 
         public async Task StartAsync() {
             Connected = true;
+            await SendClientRSAPublicKeyAsync();
             await ListenLoopAsync();
         }
 
         public void ChangeState<T>() where T : notnull, ProtocolState {
+            Log.Debug($"Changing protocl {client.Client.Handle} from state {ProtocolState?.GetType()} to {typeof(T)}");
             ProtocolState = (T)Activator.CreateInstance(typeof(T), this)!;
         }
 
@@ -55,11 +59,9 @@ namespace Moonlapse.Server {
 
                 if (packetsToSend.Count > 0) {
                     var packetToSend = packetsToSend.Dequeue();
-                    var packetConfig = new PacketConfig();
-                    packetConfig.AESEncrypted = PacketConfig.HasFlag(packetToSend, PacketsExtensions.Encrypted);
 
                     if (recipient == this) {
-                        await SendClientAsync(packetToSend, packetConfig);
+                        await SendClientAsync(packetToSend);
                     } else {
                         recipient.ProtocolState.DispatchPacket(this, packetToSend);
                     }
@@ -84,13 +86,27 @@ namespace Moonlapse.Server {
             }
         }
 
+        public void SetAesPrivateKey(byte[] key) {
+            aesPrivateKey = key;
+            Log.Debug($"Set protocol {client.Client.Handle}'s AES key");
+        }
+
         async Task SendClientAsync(Packet packet, PacketConfig? packetConfig = default) { 
             try {
                 var stream = client.GetStream();
-                await packetDeliveryService.SendPacketAsync(client.GetStream(), packet, packetConfig);
+                await packetDeliveryService.SendPacketAsync(client.GetStream(), packet, aesPrivateKey, packetConfig);
             } catch (InvalidOperationException) {
                 throw new SocketClosedException();
             }
+        }
+
+        async Task SendClientRSAPublicKeyAsync() {
+            var publicKey = Crypto.GetRSAPublicKey();
+            var byteString = ByteString.CopyFrom(publicKey);
+            var packet = new Packet();
+            packet.PublicRsaKey = new PublicRSAKeyPacket() { Key = byteString };
+            await SendClientAsync(packet);
+            Log.Debug($"Sent client {client.Client.Handle} the server's public RSA key");
         }
 
         /// <summary>
@@ -125,7 +141,7 @@ namespace Moonlapse.Server {
         async Task<Packet> ReadNextPacketAsync() {
             try {
                 var stream = client.GetStream();
-                return await packetDeliveryService.ReceivePacketAsync(client.GetStream());
+                return await packetDeliveryService.ReceivePacketAsync(client.GetStream(), aesPrivateKey);
             }
             catch (InvalidOperationException) {
                 throw new SocketClosedException();

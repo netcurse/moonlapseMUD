@@ -25,10 +25,20 @@ message ChatPacket {
     string message = 2;
 }
 
+message PublicRSAKeyPacket {
+	bytes key = 1;
+}
+
+message AESKeyPacket {
+    bytes key = 1;
+}
+
 message Packet {
     oneof type {
         LoginPacket login = 1 [(encrypted) = true];
         RegisterPacket register = 2 [(encrypted) = true];
         ChatPacket chat = 3 [(encrypted) = false];
+        PublicRSAKeyPacket public_rsa_key = 4 [(encrypted) = false];
+        AESKeyPacket aes_key = 5 [(encrypted) = true];
     }
 }

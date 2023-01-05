@@ -15,7 +15,7 @@ namespace Moonlapse.Server.Packets {
             this.serializerService = serializerService;
         }
 
-        public async Task<Packet> ReceivePacketAsync(NetworkStream stream) {
+        public async Task<Packet> ReceivePacketAsync(NetworkStream stream, byte[] aesPrivateKey) {
             var maxBufferSize = 1500;
             var header = new byte[1];
             int headerBytesRead;
@@ -38,17 +38,29 @@ namespace Moonlapse.Server.Packets {
                 data = Crypto.RSADecrypt(data);
             }
             if (packetConfig.AESEncrypted) {
-                data = Crypto.AESDecrypt(data);
+                data = Crypto.AESDecrypt(data, aesPrivateKey);
             }
 
             var packet = serializerService.Deserialize(data);
             return packet;
         }
 
-        public async Task SendPacketAsync(NetworkStream stream, Packet packet, PacketConfig? config = default) {
+        public async Task SendPacketAsync(NetworkStream stream, Packet packet, byte[] aesPrivateKey, PacketConfig? config = default) {
             config ??= new PacketConfig();
+
+            // Ensure the AESEncrypted flag is set on the header if the packet type demands encryption
+            if (PacketConfig.HasFlag(packet, PacketsExtensions.Encrypted)) {
+                config.AESEncrypted = true;
+                config.RSAEncrypted = false;
+            }
+
             var header = config.ToByte();
+
             var data = serializerService.Serialize(packet);
+            if (config.AESEncrypted) {
+                data = Crypto.AESEncrypt(data, aesPrivateKey);
+            }
+
             await stream.WriteAsync(new[] { header });
             await stream.WriteAsync(data);
             await stream.FlushAsync();
