@@ -27,11 +27,12 @@ namespace Moonlapse.Server {
         readonly IPacketDeliveryService packetDeliveryService;
         readonly TcpClient client;
         readonly Server server;
-        byte[] aesPrivateKey; // TODO: Make crypto a class which can store the server's public key and the client's AES key
+        CryptoContext cryptoContext;
 
         public Protocol(TcpClient client, Server server) {
             this.client = client;
             this.server = server;
+            cryptoContext = new CryptoContext();
             packetDeliveryService = Container.ResolveRequired<IPacketDeliveryService>();
             ChangeState<EntryState>();
             outboundPacketQueues = new Dictionary<Protocol, CircularQueue<Packet>>();
@@ -86,23 +87,23 @@ namespace Moonlapse.Server {
             }
         }
 
-        public void SetAesPrivateKey(byte[] key) {
-            aesPrivateKey = key;
+        public void SetAESPrivateKey(byte[] key) {
+            cryptoContext.SetClientAESPrivateKey(key);
             Log.Debug($"Set protocol {client.Client.Handle}'s AES key");
         }
 
         async Task SendClientAsync(Packet packet, PacketConfig? packetConfig = default) { 
             try {
                 var stream = client.GetStream();
-                await packetDeliveryService.SendPacketAsync(client.GetStream(), packet, aesPrivateKey, packetConfig);
+                await packetDeliveryService.SendPacketAsync(client.GetStream(), packet, cryptoContext, packetConfig);
             } catch (InvalidOperationException) {
                 throw new SocketClosedException();
             }
         }
-
+        
         async Task SendClientRSAPublicKeyAsync() {
-            var publicKey = Crypto.GetRSAPublicKey();
-            var byteString = ByteString.CopyFrom(publicKey);
+            string publicKey = cryptoContext.GetServerRSAPublicKey();
+            var byteString = ByteString.CopyFrom(Encoding.UTF8.GetBytes(publicKey));
             var packet = new Packet();
             packet.PublicRsaKey = new PublicRSAKeyPacket() { Key = byteString };
             await SendClientAsync(packet);
@@ -141,7 +142,7 @@ namespace Moonlapse.Server {
         async Task<Packet> ReadNextPacketAsync() {
             try {
                 var stream = client.GetStream();
-                return await packetDeliveryService.ReceivePacketAsync(client.GetStream(), aesPrivateKey);
+                return await packetDeliveryService.ReceivePacketAsync(client.GetStream(), cryptoContext);
             }
             catch (InvalidOperationException) {
                 throw new SocketClosedException();

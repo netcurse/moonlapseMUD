@@ -21,7 +21,7 @@ namespace Moonlapse.Server.ProtocolStates {
         void EntryProtocolState_AesKeyPacketEvent(object sender, PacketEventArgs args) {
             var packet = args.Packet;
             Log.Debug($"Received AES key from the client");
-            protocol.SetAesPrivateKey(packet.AesKey.Key.ToByteArray());
+            protocol.SetAESPrivateKey(packet.AesKey.Key.ToByteArray());
         }
     }
 }

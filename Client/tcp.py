@@ -1,7 +1,7 @@
 import socket
 import threading
 import packets_pb2 as pack
-import crypto
+from crypto import CryptoContext
 from typing import Optional
 from google.protobuf import message as pb
 from packet_config import PacketConfig
@@ -15,8 +15,7 @@ class Client:
         self.read_thread = threading.Thread(target=self.read)
         self.write_thread = threading.Thread(target=self.write)
         self.username: str = input("Please enter your name: ")
-        self.aes_key: bytes = crypto.gen_aes_key() # TODO: Make crypto a class which can store the server's public key and the client's AES key
-        self.server_rsa_public_key: bytes = b""
+        self.crypto_context: CryptoContext = CryptoContext()
 
     def start(self):
         self.sock.connect(self.address)
@@ -34,7 +33,7 @@ class Client:
 
         packet_config = PacketConfig.from_byte(header[0])
         if packet_config.aes_encrypted:
-            data = crypto.aes_decrypt(data, self.aes_key)
+            data = self.crypto_context.aes_decrypt(data)
 
         packet = pack.Packet.FromString(data)
         return packet
@@ -56,10 +55,10 @@ class Client:
 
         data: bytes = packet.SerializeToString()
         if config.rsa_encrypted:
-            # TODO: Make crypto a class which can store the server's public key and the client's AES key
-            data = crypto.rsa_encrypt(data, self.server_rsa_public_key)
+            data = self.crypto_context.rsa_encrypt(data)
         elif config.aes_encrypted:
-            data = crypto.aes_encrypt(data, self.aes_key)
+            data = self.crypto_context.aes_encrypt(data)
+            
         self.sock.send(header.to_bytes(1, "big"))
         self.sock.send(data)
 
@@ -71,10 +70,10 @@ class Client:
                 if packet.HasField("public_rsa_key"):
                     print("Received public RSA key")
                     print(packet.public_rsa_key.key)
-                    self.server_rsa_public_key = packet.public_rsa_key.key
+                    self.crypto_context.set_server_rsa_public_key(packet.public_rsa_key.key)
 
                     aes_key_packet = pack.Packet()
-                    aes_key_packet.aes_key.key = self.aes_key
+                    aes_key_packet.aes_key.key = self.crypto_context.get_client_aes_private_key()
                     self.send_packet(aes_key_packet)
                     self.login()
 
