@@ -1,5 +1,6 @@
 import socket
 import threading
+import time
 import packets_pb2 as pack
 from crypto import CryptoContext
 from typing import Optional
@@ -59,8 +60,7 @@ class Client:
         elif config.aes_encrypted:
             data = self.crypto_context.aes_encrypt(data)
             
-        self.sock.send(header.to_bytes(1, "big"))
-        self.sock.send(data)
+        self.sock.send(header.to_bytes(1, "big") + data)
 
     def read(self):
         while self.running:
@@ -69,12 +69,12 @@ class Client:
 
                 if packet.HasField("public_rsa_key"):
                     print("Received public RSA key")
-                    print(packet.public_rsa_key.key)
                     self.crypto_context.set_server_rsa_public_key(packet.public_rsa_key.key)
 
                     aes_key_packet = pack.Packet()
                     aes_key_packet.aes_key.key = self.crypto_context.get_client_aes_private_key()
                     self.send_packet(aes_key_packet)
+                    time.sleep(1) # Required to ensure the server has received the AES key before we try to login
                     self.login()
 
                 elif packet.HasField("chat"):
