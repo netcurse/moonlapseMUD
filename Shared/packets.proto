@@ -1,5 +1,5 @@
-// Run the following command in the Shared directory to re-generate the .py and .cs file
-// protoc -I="." --python_out="../Client" --mypy_out="../Client" --csharp_out="../Server/Packets" "./packets.proto"
+// Run the following command in the root directory to re-generate the .py and .cs file
+// protoc -I="Shared" --python_out="Client" --mypy_out="Client" --csharp_out="Server/Packets" "packets.proto"
 
 syntax = "proto3";
 package packets;

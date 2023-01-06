@@ -9,6 +9,9 @@ using Serilog;
 
 namespace Moonlapse.Server.Packets {
     public class CryptoContext {
+        // The RSA keys should go in the application base directory
+        readonly static string keysPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Keys");
+
         private byte[]? clientAESPrivateKey;
         private RSACryptoServiceProvider serverRSA;
 
@@ -18,8 +21,8 @@ namespace Moonlapse.Server.Packets {
             string publicKey;
             string privateKey;
             try {
-                publicKey = File.ReadAllText(Path.Join("Keys", "public.pem"));
-                privateKey = File.ReadAllText(Path.Join("Keys", "private.pem"));
+                publicKey = File.ReadAllText(Path.Join(keysPath, "public.pem"));
+                privateKey = File.ReadAllText(Path.Join(keysPath, "private.pem"));
             }
             catch (IOException e) {
                 Log.Error("Error while reading keys: " + e.Message);
@@ -44,9 +47,9 @@ namespace Moonlapse.Server.Packets {
             var privateKey = rsa.ExportRSAPrivateKeyPem();
 
             // Write the pem files to disk
-            var keysDir = Directory.CreateDirectory("Keys");
-            File.WriteAllText(Path.Join("Keys", "public.pem"), publicKey);
-            File.WriteAllText(Path.Join("Keys", "private.pem"), privateKey);
+            var keysDir = Directory.CreateDirectory(keysPath);
+            File.WriteAllText(Path.Join(keysPath, "public.pem"), publicKey);
+            File.WriteAllText(Path.Join(keysPath, "private.pem"), privateKey);
         }
 
         public byte[] AESEncrypt(byte[] plainText) {

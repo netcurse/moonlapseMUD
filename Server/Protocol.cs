@@ -76,6 +76,21 @@ namespace Moonlapse.Server {
         }
 
         /// <summary>
+        /// Gets this protocol to add a packet to its outbound queue. Use this function to send a packet <c>packet</c> to another protocol <c>other</c>:
+        /// This will schedule the packet for dispatch in a future tick, which in turn, will call the receiving protocol's packetReceived method for processing.
+        /// </summary>
+        public void QueueOutboundPacket(Protocol recipient, Packet packet) {
+            if (outboundPacketQueues.TryGetValue(recipient, out CircularQueue<Packet>? value)) {
+                value!.Enqueue(packet);
+            }
+            else {
+                outboundPacketQueues.Add(recipient, new CircularQueue<Packet>(10)); // Each queue has a max size of 10 (rolls over) to avoid spamming
+                outboundPacketQueues[recipient].Enqueue(packet);
+            }
+            Log.Debug($"{client.Client.Handle} queued a {packet.TypeCase} packet for protocol {recipient.client.Client.Handle} while in the {ProtocolState.GetType()} state");
+        }
+
+        /// <summary>
         /// Broadcasts a packet to all protocols connected to the server except yourself 
         /// (unless you set the optional <c>includeSender</c> parameter to <c>true</c>).
         /// </summary>
@@ -108,21 +123,6 @@ namespace Moonlapse.Server {
             packet.PublicRsaKey = new PublicRSAKeyPacket() { Key = byteString };
             await SendClientAsync(packet);
             Log.Debug($"Sent client {client.Client.Handle} the server's public RSA key");
-        }
-
-        /// <summary>
-        /// Gets this protocol to add a packet to its outbound queue. Use this function to send a packet <c>packet</c> to another protocol <c>other</c>:
-        /// This will schedule the packet for dispatch in a future tick, which in turn, will call the receiving protocol's packetReceived method for processing.
-        /// </summary>
-        public void QueueOutboundPacket(Protocol recipient, Packet packet) {
-            if (outboundPacketQueues.TryGetValue(recipient, out CircularQueue<Packet>? value)) {
-                value!.Enqueue(packet);
-            }
-            else {
-                outboundPacketQueues.Add(recipient, new CircularQueue<Packet>(10)); // Each queue has a max size of 10 (rolls over) to avoid spamming
-                outboundPacketQueues[recipient].Enqueue(packet);
-            }
-            Log.Debug($"{client.Client.Handle} queued a {packet.TypeCase} packet for protocol {recipient.client.Client.Handle} while in the {ProtocolState.GetType()} state");
         }
 
         async Task ListenLoopAsync() {
