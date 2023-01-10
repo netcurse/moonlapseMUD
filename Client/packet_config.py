@@ -1,6 +1,9 @@
 import packets_pb2 as pack
 
 class PacketConfig:
+    
+    flags_cache: dict = {}  # Memoization cache for the `has_flag` method
+
     def __init__(self, rsa_encrypted: bool = False, aes_encrypted: bool = False, reserved1: bool = False, reserved2: bool = False, reserved3: bool = False, reserved4: bool = False, reserved5: bool = False, reserved6: bool = False):
         self.rsa_encrypted = rsa_encrypted
         self.aes_encrypted = aes_encrypted
@@ -39,8 +42,23 @@ class PacketConfig:
         
         The flag to check is accessible with `pack.flag_name`.
         """
+        packet_type_name: str = packet.WhichOneof('type')
+
+        # Look this packet up in the cache and check if the flag is already set
+        if packet_type_name in PacketConfig.flags_cache:
+            cachedFlags: dict = PacketConfig.flags_cache[packet_type_name]
+            if flag in cachedFlags:
+                return cachedFlags[flag]
+        else:
+            PacketConfig.flags_cache[packet_type_name] = {}
+        
+        # If the flag is not cached, manually look it up in the packet descriptor and update the cache
+        flag_value: bool = False
         packet_types = pack.Packet.DESCRIPTOR.oneofs_by_name['type'].fields
         for packet_type in packet_types:
-            if packet_type.name == packet.WhichOneof('type'):
-                return packet_type.GetOptions().Extensions[flag]
-        return False
+            if packet_type.name == packet_type_name:
+                flag_value = packet_type.GetOptions().Extensions[flag]
+                break
+        
+        PacketConfig.flags_cache[packet_type_name][flag] = flag_value
+        return flag_value

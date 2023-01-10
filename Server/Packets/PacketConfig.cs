@@ -5,9 +5,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.Sockets;
 
 namespace Moonlapse.Server.Packets {
     public class PacketConfig {
+        /// <summary>
+        /// A dictionary with packet type names as keys and a set of their flags as values.
+        /// This dictionary is used by the <c>HasFlag</c> method for memoization. E.g.:
+        /// <code>
+        /// {
+        ///   "LoginPacket": { "Encrypted": true },
+        ///   "ChatPacket": { "Encrypted": false }
+        /// }
+        /// </code>
+        /// </summary>
+        static Dictionary<string, Dictionary<Extension<FieldOptions, bool>, bool>> flagsCache = new();
+
         public bool RSAEncrypted;
         public bool AESEncrypted;
         public bool Reserved1;
@@ -54,6 +67,7 @@ namespace Moonlapse.Server.Packets {
             );
         }
 
+        
         /// <summary>
         /// Returns true only if the given packet has the given flag set to true. 
         /// Example usage:
@@ -64,12 +78,47 @@ namespace Moonlapse.Server.Packets {
         /// <param name="packet">The packet to check</param>
         /// <param name="flag">The flag to check (accessible with <c>PacketsExtensions.FlagName</c></param>
         public static bool HasFlag(Packet packet, Extension<FieldOptions, bool> flag) {
+            string packetTypeName = packet.TypeCase.ToString();
+
+            // Look this packet up in the cache and check if the flag is already set
+            if (GetCachedFlag(packetTypeName, flag, out bool cachedFlag)) {
+                return cachedFlag;
+            }
+
+            // Manually check if the flag's set, and update the cache
+            bool flagValue = false;
             var packetTypes = Packet.Descriptor.Oneofs[0].Fields;
             foreach (var packetType in packetTypes) {
-                if (packetType.PropertyName == packet.TypeCase.ToString()) {
-                    return packetType.GetOptions().GetExtension(flag);
+                if (packetType.PropertyName == packetTypeName) {
+                    flagValue = packetType.GetOptions().GetExtension(flag);
+                    break;
                 }
             }
+            UpdateFlagCache(packetTypeName, flag, flagValue);
+            return flagValue;
+        }
+
+        static void UpdateFlagCache(string packetName, Extension<FieldOptions, bool> flag, bool hasFlagSet) {
+            if (!flagsCache.ContainsKey(packetName)) {
+                flagsCache.Add(packetName, new Dictionary<Extension<FieldOptions, bool>, bool>());
+            }
+            var cachedPacketTypeFlags = flagsCache[packetName];
+            if (!cachedPacketTypeFlags.ContainsKey(flag)) {
+                cachedPacketTypeFlags.Add(flag, hasFlagSet);
+            } else {
+                cachedPacketTypeFlags[flag] = hasFlagSet;
+            }
+        }
+
+        static bool GetCachedFlag(string packetName, Extension<FieldOptions, bool> flag, out bool cachedFlag) {
+            if (flagsCache.ContainsKey(packetName)) {
+                var cachedPacketTypeFlags = flagsCache[packetName];
+                if (cachedPacketTypeFlags.ContainsKey(flag)) {
+                    cachedFlag = cachedPacketTypeFlags[flag];
+                    return true;
+                }
+            }
+            cachedFlag = false;
             return false;
         }
     }
