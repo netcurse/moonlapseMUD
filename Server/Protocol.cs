@@ -1,11 +1,15 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Google.Protobuf;
+using Google.Protobuf.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using Moonlapse.Server.Packets;
 using Moonlapse.Server.ProtocolStates;
 using Moonlapse.Server.Serializers;
 using Moonlapse.Server.Utils;
 using Serilog;
+using Serilog.Debugging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -23,10 +27,12 @@ namespace Moonlapse.Server {
         readonly IPacketDeliveryService packetDeliveryService;
         readonly TcpClient client;
         readonly Server server;
+        CryptoContext cryptoContext;
 
         public Protocol(TcpClient client, Server server) {
             this.client = client;
             this.server = server;
+            cryptoContext = new CryptoContext();
             packetDeliveryService = Container.ResolveRequired<IPacketDeliveryService>();
             ChangeState<EntryState>();
             outboundPacketQueues = new Dictionary<Protocol, CircularQueue<Packet>>();
@@ -34,10 +40,12 @@ namespace Moonlapse.Server {
 
         public async Task StartAsync() {
             Connected = true;
+            await SendClientRSAPublicKeyAsync();
             await ListenLoopAsync();
         }
 
         public void ChangeState<T>() where T : notnull, ProtocolState {
+            Log.Debug($"Changing protocl {client.Client.Handle} from state {ProtocolState?.GetType()} to {typeof(T)}");
             ProtocolState = (T)Activator.CreateInstance(typeof(T), this)!;
         }
 
@@ -68,27 +76,6 @@ namespace Moonlapse.Server {
         }
 
         /// <summary>
-        /// Broadcasts a packet to all protocols connected to the server except yourself 
-        /// (unless you set the optional <c>includeSender</c> parameter to <c>true</c>).
-        /// </summary>
-        public void Broadcast(Packet packet, bool includeSender = false) {
-            foreach (var proto in server.ConnectedProtocols) {
-                if (proto != this || includeSender) {
-                    QueueOutboundPacket(proto, packet);
-                }
-            }
-        }
-
-        async Task SendClientAsync(Packet packet) {
-            try {
-                var stream = client.GetStream();
-                await packetDeliveryService.SendPacketAsync(client.GetStream(), packet);
-            } catch (InvalidOperationException) {
-                throw new SocketClosedException();
-            }
-        }
-
-        /// <summary>
         /// Gets this protocol to add a packet to its outbound queue. Use this function to send a packet <c>packet</c> to another protocol <c>other</c>:
         /// This will schedule the packet for dispatch in a future tick, which in turn, will call the receiving protocol's packetReceived method for processing.
         /// </summary>
@@ -101,6 +88,41 @@ namespace Moonlapse.Server {
                 outboundPacketQueues[recipient].Enqueue(packet);
             }
             Log.Debug($"{client.Client.Handle} queued a {packet.TypeCase} packet for protocol {recipient.client.Client.Handle} while in the {ProtocolState.GetType()} state");
+        }
+
+        /// <summary>
+        /// Broadcasts a packet to all protocols connected to the server except yourself 
+        /// (unless you set the optional <c>includeSender</c> parameter to <c>true</c>).
+        /// </summary>
+        public void Broadcast(Packet packet, bool includeSender = false) {
+            foreach (var proto in server.ConnectedProtocols) {
+                if (proto != this || includeSender) {
+                    QueueOutboundPacket(proto, packet);
+                }
+            }
+        }
+
+        public void SetAESPrivateKey(byte[] key) {
+            cryptoContext.SetClientAESPrivateKey(key);
+            Log.Debug($"Set protocol {client.Client.Handle}'s AES key");
+        }
+
+        async Task SendClientAsync(Packet packet, PacketConfig? packetConfig = default) { 
+            try {
+                var stream = client.GetStream();
+                await packetDeliveryService.SendPacketAsync(client.GetStream(), packet, cryptoContext, packetConfig);
+            } catch (InvalidOperationException) {
+                throw new SocketClosedException();
+            }
+        }
+        
+        async Task SendClientRSAPublicKeyAsync() {
+            string publicKey = cryptoContext.GetServerRSAPublicKey();
+            var byteString = ByteString.CopyFrom(Encoding.UTF8.GetBytes(publicKey));
+            var packet = new Packet();
+            packet.PublicRsaKey = new PublicRSAKeyPacket() { Key = byteString };
+            await SendClientAsync(packet);
+            Log.Debug($"Sent client {client.Client.Handle} the server's public RSA key");
         }
 
         async Task ListenLoopAsync() {
@@ -120,7 +142,7 @@ namespace Moonlapse.Server {
         async Task<Packet> ReadNextPacketAsync() {
             try {
                 var stream = client.GetStream();
-                return await packetDeliveryService.ReceivePacketAsync(client.GetStream());
+                return await packetDeliveryService.ReceivePacketAsync(client.GetStream(), cryptoContext);
             }
             catch (InvalidOperationException) {
                 throw new SocketClosedException();

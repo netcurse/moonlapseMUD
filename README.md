@@ -10,27 +10,43 @@ git clone https://github.com/netcurse/moonlapseMUD
 cd moonlapseMUD
 ```
 
-### Setup the client virtual environment
+### Client requirements installation
+To install the client's requirements, run the following commands from the project's root directory:
 ```bash
-cd Client/
-python -m venv ./.venv
-source ./.venv/bin/activate # (or for Windows: .\.venv\Scripts\activate)
-pip install -r requirements.txt
+python -m venv Client/.venv # (may need to use "python3" or "py" instead of "python")
+source Client/.venv/bin/activate # (or for Windows: Client\.venv\Scripts\activate)
+pip install -r Client/requirements.txt
 ```
 
-### Setting up VS Code for editing the client code
-Firstly, you should get the ms-python.python extension for VS Code. Without it, life will suck.
-
-You might get an annoying error when editing client python files in VS Code if you have Visual Studio installed. It will say something like `__main__.py" is overriding the stdlib module "__main__"`. To fix this, simply add the following to your `settings.json` file in VS Code (this will already be there if you kept the `settings.json` from the cloned repository):
+### Run the server
+To start the server, run this command from the project's root directory:
+```bash
+dotnet run --project Server
 ```
-"python.languageServer": "Pylance",
-"python.analysis.diagnosticSeverityOverrides": {
-    "reportShadowedImports": "none"
-}
+
+### Run the client
+To start the client, run this command from the project's root directory:
+```bash
+source Client/.venv/bin/activate # (or for Windows: Client\.venv\Scripts\activate)
+python Client
 ```
 
 ### Making changes to the packets
 This project uses `protobuf` to define the packets that are sent between the client and server. The packets are defined in the root directory's `packets.proto`.
+
+Note that **some** packets can be marked as encrypted. This is done by adding the `[(encrypted) = true]` option to the field of the base `Packet` definition. For example, here is a barebones definition for the base packet, noting encrypted Login, Registration, and AES Key packets, but all others are unencrypted: 
+```proto
+message Packet {
+    oneof type {
+        LoginPacket login = 1 [(encrypted) = true];
+        RegisterPacket register = 2 [(encrypted) = true];
+        ChatPacket chat = 3 [(encrypted) = false];
+        PublicRSAKeyPacket public_rsa_key = 4 [(encrypted) = false];
+        AESKeyPacket aes_key = 5 [(encrypted) = true];
+    }
+}
+```
+The `AESKeyPacket` is marked as encrypted, although this is understood to be a special case where the client uses the server's RSA public key to send its own AES private key. **Do not change the encryption status of this packet**.
 
 Every time you make a change to one of the packets in `packets.proto`, you need to run `protoc` to generate the C# and Python code. 
 To get this set up initially, make sure you have the following pip packages installed (you should if you ran `pip install -r requirements.txt` as per above):
@@ -39,22 +55,14 @@ mypy-protobuf
 pylint-protobuf
 ```
 
-You should also make sure the following setting is defined in your `settings.json` file (again, this will already be there if you kept the `settings.json` from the cloned repository):
-```json
-"python.linting.pylintArgs": [
-    "--load-plugins",
-    "pylint_protobuf"
-]
-```
-
 Now to actually (re-)generate the C# and Python code defining the packets, run the following command from the project's root directory:
 ```bash
-protoc -I="." --python_out="./Client" --mypy_out="./Client" --csharp_out="./Server" "./packets.proto"
+protoc -I="Shared" --python_out="Client" --mypy_out="Client" --csharp_out="Server/Packets" "packets.proto"
 ```
 
 You should see the following files are updated:
 ```
-Server/Packets.cs
+Server/Packets/Packets.cs
 Client/packets_pb2.py
 Client/packets_pb2.pyi
 ```
@@ -93,3 +101,13 @@ To send a packet `packet` directly to the client of a protocol `proto`, simply u
 ```csharp
 proto.QueueOutboundPacket(proto, packet);
 ```
+
+### A note on packet transmission
+Packets are sent with a corresponding `PacketConfig` object. The `PacketConfig` object contains a one-byte (8-bit) header that is sent in front of the packet, and communicates flags such as whether the packet is encrypted or not.
+
+When you send a packet, you can construct a `PacketConfig` to use (this may be useful if you want to communicate other properties of the packet), but ultimately, the server will set the appropriate encryption bits in the header for you, depending on the `encrypted` flag of the packet's definition in `packets.proto`.
+
+### A note on encryption
+The server's RSA key is generated on startup (unless it already exists), and is stored in a `Server/bin/Keys` directory as `public.pem` and `private.pem`. `private.pem` should **never** be shared.
+
+Each client generates its own unique AES private key on startup, and sends it to the server using the `AESKeyPacket` (which is encrypted using the server's RSA public key). The client's server protocol then stores the received and decrypted AES private key in a `CryptoContext` object, which is passed around when sending packets to this protocol.
