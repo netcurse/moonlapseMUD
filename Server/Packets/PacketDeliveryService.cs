@@ -36,8 +36,7 @@ namespace Moonlapse.Server.Packets {
 
             if (packetConfig.RSAEncrypted) {
                 data = cryptoContext.RSADecrypt(data);
-            }
-            if (packetConfig.AESEncrypted) {
+            } else if (packetConfig.AESEncrypted) {
                 data = cryptoContext.AESDecrypt(data);
             }
 
