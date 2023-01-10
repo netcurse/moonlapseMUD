@@ -12,8 +12,8 @@ namespace Moonlapse.Server.Packets {
         // The RSA keys should go in the application base directory
         readonly static string keysPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Keys");
 
-        private byte[]? clientAESPrivateKey;
-        private RSACryptoServiceProvider serverRSA;
+        byte[]? clientAESPrivateKey;
+        RSACryptoServiceProvider serverRSA;
 
         public CryptoContext() {
             serverRSA = new RSACryptoServiceProvider(2048);
