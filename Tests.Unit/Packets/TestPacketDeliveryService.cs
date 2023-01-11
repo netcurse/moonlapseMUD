@@ -10,11 +10,12 @@ namespace Moonlapse.Server.Tests.Unit.Packets;
 
 public class TestPacketDeliveryService : IDisposable {
 
-    const int PORT = 42720;
-    readonly TimeSpan timeout = TimeSpan.FromMilliseconds(5000);
+    const int Port = 42720;
 
     NetworkStream ClientStream => clientConnection.GetStream();
     NetworkStream ServerStream => serverConnection.GetStream();
+
+    readonly TimeSpan timeout = TimeSpan.FromMilliseconds(5000);
 
     readonly Packet mockLoginPacket;
 
@@ -36,7 +37,7 @@ public class TestPacketDeliveryService : IDisposable {
         };
 
         // create server socket
-        listener = new TcpListener(IPAddress.Loopback, PORT);
+        listener = new TcpListener(IPAddress.Loopback, Port);
 
         // create mock client socket
         clientConnection = new TcpClient();
@@ -103,7 +104,7 @@ public class TestPacketDeliveryService : IDisposable {
         listener.Start();
 
         var serverTask = listener.AcceptTcpClientAsync();
-        var clientTask = clientConnection.ConnectAsync(IPAddress.Loopback, PORT);
+        var clientTask = clientConnection.ConnectAsync(IPAddress.Loopback, Port);
 
         Task.WaitAll(new Task[] { clientTask.TimeoutAfter(timeout), serverTask.TimeoutAfter(timeout) }, timeout);
 
