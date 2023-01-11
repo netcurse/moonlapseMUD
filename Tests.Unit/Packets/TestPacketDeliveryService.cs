@@ -1,6 +1,6 @@
 ﻿using Moonlapse.Server.Packets;
 using Moonlapse.Server.Serializers;
-using Moonlapse.Server.Tests.Unit.Extensions;
+using Moonlapse.Server.Extensions;
 using Moonlapse.Server.Utils;
 using System.Net;
 using System.Net.Sockets;

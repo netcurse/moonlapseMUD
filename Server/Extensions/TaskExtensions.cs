@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Moonlapse.Server.Tests.Unit.Extensions {
+namespace Moonlapse.Server.Extensions {
     public static class TaskExtensions {
 
         // retrieved from https://stackoverflow.com/questions/4238345/asynchronously-wait-for-taskt-to-complete-with-timeout
