@@ -31,7 +31,7 @@ namespace Moonlapse.Server.Extensions {
             }
         }
 
-        public static Task<TResult> AwaitResult<TResult> (this Task<TResult> task) {
+        public static Task<TResult> Await<TResult> (this Task<TResult> task) {
             task.Wait();
             return task;
         }

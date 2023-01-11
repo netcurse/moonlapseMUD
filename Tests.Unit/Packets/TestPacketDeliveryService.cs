@@ -61,12 +61,12 @@ public class TestPacketDeliveryService : IDisposable {
         ClientStream.Write(bytes);
 
         // server read
-        var task = packetDeliveryService
+        var packet = packetDeliveryService
             .ReceivePacketAsync(ServerStream)
             .TimeoutAfter(timeout)
-            .AwaitResult();
+            .Await()
+            .Result;
 
-        var packet = task.Result;
         Assert.Equal(mockLoginPacket, packet);
     }
 
@@ -81,21 +81,21 @@ public class TestPacketDeliveryService : IDisposable {
         ClientStream.Write(bytes);
 
         // read
-        var task = packetDeliveryService
+        var packet = packetDeliveryService
             .ReceivePacketAsync(ServerStream)
             .TimeoutAfter(timeout)
-            .AwaitResult();
+            .Await()
+            .Result;
 
-        var packet = task.Result;
         Assert.Equal(mockLoginPacket, packet);
 
         // read second packet
-        task = packetDeliveryService
+        packet = packetDeliveryService
             .ReceivePacketAsync(ServerStream)
             .TimeoutAfter(timeout)
-            .AwaitResult();
+            .Await()
+            .Result;
 
-        packet = task.Result;
         Assert.Equal(mockLoginPacket, packet);
     }
 
