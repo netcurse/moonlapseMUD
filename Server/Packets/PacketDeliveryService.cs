@@ -15,7 +15,7 @@ namespace Moonlapse.Server.Packets {
             this.serializerService = serializerService;
         }
 
-        public async Task<Packet> ReceivePacketAsync(NetworkStream stream) {
+        public async Task<Packet> ReceivePacketAsync(Stream stream) {
             var maxBufferSize = 1500;
             var data = new byte[maxBufferSize];
             int bytesRead;
@@ -34,7 +34,7 @@ namespace Moonlapse.Server.Packets {
             return packet;
         }
 
-        public async Task SendPacketAsync(NetworkStream stream, Packet packet) {
+        public async Task SendPacketAsync(Stream stream, Packet packet) {
             var data = serializerService.Serialize(packet);
             await stream.WriteAsync(data);
             await stream.FlushAsync();
