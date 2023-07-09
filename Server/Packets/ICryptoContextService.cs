@@ -11,5 +11,6 @@ namespace Moonlapse.Server.Packets {
         byte[] AESEncrypt(byte[] plainText);
         byte[] RSADecrypt(byte[] data);
         byte[] AESDecrypt(byte[] data);
+        void GenerateRSAKeyPair();
     }
 }

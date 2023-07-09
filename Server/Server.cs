@@ -29,7 +29,7 @@ namespace Moonlapse.Server {
         }
 
         public async Task StartAsync() {
-            CryptoContextService.GenerateRSAKeyPair();
+            Container.ResolveRequired<ICryptoContextService>().GetServerRSAPublicKey();
             listener.Start();
             Log.Information($"Started listening on port {Port}");
 
