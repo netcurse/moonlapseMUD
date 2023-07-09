@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 namespace Moonlapse.Server.Packets {
     public class PacketDeliveryService : IPacketDeliveryService {
         readonly ISerializerService serializerService;
-        readonly ICryptoContextService cryptoContext;
+        readonly ICryptoContextService cryptoContextService;
         readonly IPacketConfigService packetConfigService;
         
 
         public PacketDeliveryService(ISerializerService serializerService, ICryptoContextService cryptoContext, IPacketConfigService packetConfigService) {
             this.serializerService = serializerService;
-            this.cryptoContext = cryptoContext;
+            this.cryptoContextService = cryptoContext;
             this.packetConfigService = packetConfigService;
         }
 
@@ -40,9 +40,9 @@ namespace Moonlapse.Server.Packets {
             data = data[0..dataBytesRead];  // strip trailing empty bytes
 
             if (packetConfig.RSAEncrypted) {
-                data = cryptoContext.RSADecrypt(data);
+                data = cryptoContextService.RSADecrypt(data);
             } else if (packetConfig.AESEncrypted) {
-                data = cryptoContext.AESDecrypt(data);
+                data = cryptoContextService.AESDecrypt(data);
             }
 
             var packet = serializerService.Deserialize(data);
@@ -62,7 +62,7 @@ namespace Moonlapse.Server.Packets {
             
             var data = serializerService.Serialize(packet);
             if (config.AESEncrypted) {
-                data = cryptoContext.AESEncrypt(data);
+                data = cryptoContextService.AESEncrypt(data);
             }
 
             await stream.WriteAsync(new[] { header });
