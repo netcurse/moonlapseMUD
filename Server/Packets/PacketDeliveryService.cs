@@ -10,12 +10,14 @@ using System.Threading.Tasks;
 namespace Moonlapse.Server.Packets {
     public class PacketDeliveryService : IPacketDeliveryService {
         readonly ISerializerService serializerService;
+        readonly ICryptoContext cryptoContext;
 
-        public PacketDeliveryService(ISerializerService serializerService) {
+        public PacketDeliveryService(ISerializerService serializerService, ICryptoContext cryptoContext) {
             this.serializerService = serializerService;
+            this.cryptoContext = cryptoContext;
         }
 
-        public async Task<Packet> ReceivePacketAsync(NetworkStream stream, CryptoContext cryptoContext) {
+        public async Task<Packet> ReceivePacketAsync(NetworkStream stream) {
             var maxBufferSize = 1500;
             var header = new byte[1];
             int headerBytesRead;
@@ -44,7 +46,7 @@ namespace Moonlapse.Server.Packets {
             return packet;
         }
 
-        public async Task SendPacketAsync(NetworkStream stream, Packet packet, CryptoContext cryptoContext, PacketConfig? config = default) {
+        public async Task SendPacketAsync(NetworkStream stream, Packet packet, PacketConfig? config = default) {
             config ??= new PacketConfig();
 
             // Ensure the AESEncrypted flag is set on the header if the packet type demands encryption

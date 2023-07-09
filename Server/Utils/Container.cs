@@ -15,7 +15,8 @@ namespace Moonlapse.Server.Utils {
         public static void ConfigureServices() {
             var services = new ServiceCollection()
                 .AddSingleton<ISerializerService, ProtobufSerializerService>()
-                .AddSingleton<IPacketDeliveryService, PacketDeliveryService>();
+                .AddSingleton<IPacketDeliveryService, PacketDeliveryService>()
+                .AddSingleton<ICryptoContext, CryptoContext>();
 
             serviceProvider = services.BuildServiceProvider();
         }

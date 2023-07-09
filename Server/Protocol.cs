@@ -25,15 +25,15 @@ namespace Moonlapse.Server {
         /// </summary>
         readonly IDictionary<Protocol, CircularQueue<Packet>> outboundPacketQueues;
         readonly IPacketDeliveryService packetDeliveryService;
+        readonly ICryptoContext cryptoContext;
         readonly TcpClient client;
         readonly Server server;
-        CryptoContext cryptoContext;
 
         public Protocol(TcpClient client, Server server) {
             this.client = client;
             this.server = server;
-            cryptoContext = new CryptoContext();
             packetDeliveryService = Container.ResolveRequired<IPacketDeliveryService>();
+            cryptoContext = Container.ResolveRequired<ICryptoContext>();
             ChangeState<EntryState>();
             outboundPacketQueues = new Dictionary<Protocol, CircularQueue<Packet>>();
         }
@@ -110,7 +110,7 @@ namespace Moonlapse.Server {
         async Task SendClientAsync(Packet packet, PacketConfig? packetConfig = default) { 
             try {
                 var stream = client.GetStream();
-                await packetDeliveryService.SendPacketAsync(client.GetStream(), packet, cryptoContext, packetConfig);
+                await packetDeliveryService.SendPacketAsync(client.GetStream(), packet, packetConfig);
             } catch (InvalidOperationException) {
                 throw new SocketClosedException();
             }
@@ -142,7 +142,7 @@ namespace Moonlapse.Server {
         async Task<Packet> ReadNextPacketAsync() {
             try {
                 var stream = client.GetStream();
-                return await packetDeliveryService.ReceivePacketAsync(client.GetStream(), cryptoContext);
+                return await packetDeliveryService.ReceivePacketAsync(client.GetStream());
             }
             catch (InvalidOperationException) {
                 throw new SocketClosedException();
