@@ -10,32 +10,62 @@ using System.Threading.Tasks;
 namespace Moonlapse.Server.Packets {
     public class PacketDeliveryService : IPacketDeliveryService {
         readonly ISerializerService serializerService;
+        readonly ICryptoContextService cryptoContextService;
+        readonly IPacketConfigService packetConfigService;
+        
 
-        public PacketDeliveryService(ISerializerService serializerService) {
+        public PacketDeliveryService(ISerializerService serializerService, ICryptoContextService cryptoContext, IPacketConfigService packetConfigService) {
             this.serializerService = serializerService;
+            this.cryptoContextService = cryptoContext;
+            this.packetConfigService = packetConfigService;
         }
 
         public async Task<Packet> ReceivePacketAsync(NetworkStream stream) {
             var maxBufferSize = 1500;
-            var data = new byte[maxBufferSize];
-            int bytesRead;
+            var header = new byte[1];
+            int headerBytesRead;
+            var data = new byte[maxBufferSize - 1];
+            int dataBytesRead;
             try {
-                bytesRead = await stream.ReadAsync(data);
+                headerBytesRead = await stream.ReadAsync(header, 0, 1);
+                dataBytesRead = await stream.ReadAsync(data, 0, maxBufferSize - 1);
             } catch (IOException) {
                 throw new SocketClosedException();
             }
-            if (bytesRead == 0) {
+            if (headerBytesRead == 0 || dataBytesRead == 0) {
                 throw new SocketClosedException();
             }
+            
+            var packetConfig = packetConfigService.FromByte(header[0]);
+            data = data[0..dataBytesRead];  // strip trailing empty bytes
 
-            data = data[0..bytesRead];  // strip trailing empty bytes
+            if (packetConfig.RSAEncrypted) {
+                data = cryptoContextService.RSADecrypt(data);
+            } else if (packetConfig.AESEncrypted) {
+                data = cryptoContextService.AESDecrypt(data);
+            }
 
             var packet = serializerService.Deserialize(data);
             return packet;
         }
 
-        public async Task SendPacketAsync(NetworkStream stream, Packet packet) {
+        public async Task SendPacketAsync(NetworkStream stream, Packet packet, PacketConfig? config = default) {
+            config ??= new PacketConfig();
+
+            // Ensure the AESEncrypted flag is set on the header if the packet type demands encryption
+            if (packetConfigService.HasFlag(config, packet, PacketsExtensions.Encrypted)) {
+                config.AESEncrypted = true;
+                config.RSAEncrypted = false;
+            }
+
+            var header = config.ToByte();
+            
             var data = serializerService.Serialize(packet);
+            if (config.AESEncrypted) {
+                data = cryptoContextService.AESEncrypt(data);
+            }
+
+            await stream.WriteAsync(new[] { header });
             await stream.WriteAsync(data);
             await stream.FlushAsync();
         }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Moonlapse.Server.ProtocolStates {
     public abstract class ProtocolState : IProtocolState {
         protected delegate void PacketEventHandler(object sender, PacketEventArgs args);
-        protected event PacketEventHandler? LoginPacketEvent, ChatPacketEvent, RegisterPacketEvent;
+        protected event PacketEventHandler? LoginPacketEvent, ChatPacketEvent, RegisterPacketEvent, AesKeyPacketEvent;
 
         protected readonly Protocol protocol;
 
@@ -21,6 +21,7 @@ namespace Moonlapse.Server.ProtocolStates {
                 { Packet.TypeOneofCase.Login, LoginPacketEvent },
                 { Packet.TypeOneofCase.Register, RegisterPacketEvent },
                 { Packet.TypeOneofCase.Chat, ChatPacketEvent },
+                { Packet.TypeOneofCase.AesKey, AesKeyPacketEvent }
             };
             var type = packet.TypeCase;
             try {

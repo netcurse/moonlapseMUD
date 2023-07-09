@@ -1,9 +1,14 @@
-// Run the following command in the Shared directory to re-generate the .py and .cs file
-// protoc -I="." --python_out="../Client" --mypy_out="../Client" --csharp_out="../Server/Packets" "./packets.proto"
+// Run the following command in the root directory to re-generate the .py and .cs file
+// protoc -I="Shared" --python_out="Client" --mypy_out="Client" --csharp_out="Server/Packets" "packets.proto"
 
 syntax = "proto3";
 package packets;
 option csharp_namespace = "Moonlapse.Server.Packets";
+
+import "google/protobuf/descriptor.proto";
+extend google.protobuf.FieldOptions {
+    bool encrypted = 9999;
+}
 
 message LoginPacket {
     string username = 1;
@@ -20,10 +25,20 @@ message ChatPacket {
     string message = 2;
 }
 
+message PublicRSAKeyPacket {
+	bytes key = 1;
+}
+
+message AESKeyPacket {
+    bytes key = 1;
+}
+
 message Packet {
     oneof type {
-        LoginPacket login = 1;
-        RegisterPacket register = 2;
-        ChatPacket chat = 3;
+        LoginPacket login = 1 [(encrypted) = true];
+        RegisterPacket register = 2 [(encrypted) = true];
+        ChatPacket chat = 3 [(encrypted) = false];
+        PublicRSAKeyPacket public_rsa_key = 4 [(encrypted) = false];
+        AESKeyPacket aes_key = 5 [(encrypted) = true];
     }
 }
