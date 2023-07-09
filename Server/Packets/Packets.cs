@@ -24,26 +24,40 @@ namespace Moonlapse.Server.Packets {
     static PacketsReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "Cg1wYWNrZXRzLnByb3RvEgdwYWNrZXRzIjEKC0xvZ2luUGFja2V0EhAKCHVz",
-            "ZXJuYW1lGAEgASgJEhAKCHBhc3N3b3JkGAIgASgJIjQKDlJlZ2lzdGVyUGFj",
-            "a2V0EhAKCHVzZXJuYW1lGAEgASgJEhAKCHBhc3N3b3JkGAIgASgJIisKCkNo",
-            "YXRQYWNrZXQSDAoEbmFtZRgBIAEoCRIPCgdtZXNzYWdlGAIgASgJIokBCgZQ",
-            "YWNrZXQSJQoFbG9naW4YASABKAsyFC5wYWNrZXRzLkxvZ2luUGFja2V0SAAS",
-            "KwoIcmVnaXN0ZXIYAiABKAsyFy5wYWNrZXRzLlJlZ2lzdGVyUGFja2V0SAAS",
-            "IwoEY2hhdBgDIAEoCzITLnBhY2tldHMuQ2hhdFBhY2tldEgAQgYKBHR5cGVC",
-            "G6oCGE1vb25sYXBzZS5TZXJ2ZXIuUGFja2V0c2IGcHJvdG8z"));
+            "Cg1wYWNrZXRzLnByb3RvEgdwYWNrZXRzGiBnb29nbGUvcHJvdG9idWYvZGVz",
+            "Y3JpcHRvci5wcm90byIxCgtMb2dpblBhY2tldBIQCgh1c2VybmFtZRgBIAEo",
+            "CRIQCghwYXNzd29yZBgCIAEoCSI0Cg5SZWdpc3RlclBhY2tldBIQCgh1c2Vy",
+            "bmFtZRgBIAEoCRIQCghwYXNzd29yZBgCIAEoCSIrCgpDaGF0UGFja2V0EgwK",
+            "BG5hbWUYASABKAkSDwoHbWVzc2FnZRgCIAEoCSIhChJQdWJsaWNSU0FLZXlQ",
+            "YWNrZXQSCwoDa2V5GAEgASgMIhsKDEFFU0tleVBhY2tldBILCgNrZXkYASAB",
+            "KAwiiAIKBlBhY2tldBIrCgVsb2dpbhgBIAEoCzIULnBhY2tldHMuTG9naW5Q",
+            "YWNrZXRCBPjwBAFIABIxCghyZWdpc3RlchgCIAEoCzIXLnBhY2tldHMuUmVn",
+            "aXN0ZXJQYWNrZXRCBPjwBAFIABIpCgRjaGF0GAMgASgLMhMucGFja2V0cy5D",
+            "aGF0UGFja2V0QgT48AQASAASOwoOcHVibGljX3JzYV9rZXkYBCABKAsyGy5w",
+            "YWNrZXRzLlB1YmxpY1JTQUtleVBhY2tldEIE+PAEAEgAEi4KB2Flc19rZXkY",
+            "BSABKAsyFS5wYWNrZXRzLkFFU0tleVBhY2tldEIE+PAEAUgAQgYKBHR5cGU6",
+            "MQoJZW5jcnlwdGVkEh0uZ29vZ2xlLnByb3RvYnVmLkZpZWxkT3B0aW9ucxiP",
+            "TiABKAhCG6oCGE1vb25sYXBzZS5TZXJ2ZXIuUGFja2V0c2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
+          new pbr::FileDescriptor[] { global::Google.Protobuf.Reflection.DescriptorReflection.Descriptor, },
+          new pbr::GeneratedClrTypeInfo(null, new pb::Extension[] { PacketsExtensions.Encrypted }, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.LoginPacket), global::Moonlapse.Server.Packets.LoginPacket.Parser, new[]{ "Username", "Password" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.RegisterPacket), global::Moonlapse.Server.Packets.RegisterPacket.Parser, new[]{ "Username", "Password" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.ChatPacket), global::Moonlapse.Server.Packets.ChatPacket.Parser, new[]{ "Name", "Message" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.Packet), global::Moonlapse.Server.Packets.Packet.Parser, new[]{ "Login", "Register", "Chat" }, new[]{ "Type" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.PublicRSAKeyPacket), global::Moonlapse.Server.Packets.PublicRSAKeyPacket.Parser, new[]{ "Key" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.AESKeyPacket), global::Moonlapse.Server.Packets.AESKeyPacket.Parser, new[]{ "Key" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.Packet), global::Moonlapse.Server.Packets.Packet.Parser, new[]{ "Login", "Register", "Chat", "PublicRsaKey", "AesKey" }, new[]{ "Type" }, null, null, null)
           }));
     }
     #endregion
 
   }
+  /// <summary>Holder for extension identifiers generated from the top level of packets.proto</summary>
+  public static partial class PacketsExtensions {
+    public static readonly pb::Extension<global::Google.Protobuf.Reflection.FieldOptions, bool> Encrypted =
+      new pb::Extension<global::Google.Protobuf.Reflection.FieldOptions, bool>(9999, pb::FieldCodec.ForBool(79992, false));
+  }
+
   #region Messages
   public sealed partial class LoginPacket : pb::IMessage<LoginPacket>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
@@ -723,6 +737,384 @@ namespace Moonlapse.Server.Packets {
 
   }
 
+  public sealed partial class PublicRSAKeyPacket : pb::IMessage<PublicRSAKeyPacket>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<PublicRSAKeyPacket> _parser = new pb::MessageParser<PublicRSAKeyPacket>(() => new PublicRSAKeyPacket());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<PublicRSAKeyPacket> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[3]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PublicRSAKeyPacket() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PublicRSAKeyPacket(PublicRSAKeyPacket other) : this() {
+      key_ = other.key_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PublicRSAKeyPacket Clone() {
+      return new PublicRSAKeyPacket(this);
+    }
+
+    /// <summary>Field number for the "key" field.</summary>
+    public const int KeyFieldNumber = 1;
+    private pb::ByteString key_ = pb::ByteString.Empty;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pb::ByteString Key {
+      get { return key_; }
+      set {
+        key_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as PublicRSAKeyPacket);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(PublicRSAKeyPacket other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Key != other.Key) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Key.Length != 0) hash ^= Key.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Key.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteBytes(Key);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Key.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteBytes(Key);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (Key.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(Key);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(PublicRSAKeyPacket other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Key.Length != 0) {
+        Key = other.Key;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            Key = input.ReadBytes();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            Key = input.ReadBytes();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class AESKeyPacket : pb::IMessage<AESKeyPacket>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<AESKeyPacket> _parser = new pb::MessageParser<AESKeyPacket>(() => new AESKeyPacket());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<AESKeyPacket> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[4]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public AESKeyPacket() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public AESKeyPacket(AESKeyPacket other) : this() {
+      key_ = other.key_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public AESKeyPacket Clone() {
+      return new AESKeyPacket(this);
+    }
+
+    /// <summary>Field number for the "key" field.</summary>
+    public const int KeyFieldNumber = 1;
+    private pb::ByteString key_ = pb::ByteString.Empty;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pb::ByteString Key {
+      get { return key_; }
+      set {
+        key_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as AESKeyPacket);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(AESKeyPacket other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Key != other.Key) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Key.Length != 0) hash ^= Key.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Key.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteBytes(Key);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Key.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteBytes(Key);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (Key.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(Key);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(AESKeyPacket other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Key.Length != 0) {
+        Key = other.Key;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            Key = input.ReadBytes();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            Key = input.ReadBytes();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
   public sealed partial class Packet : pb::IMessage<Packet>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -737,7 +1129,7 @@ namespace Moonlapse.Server.Packets {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[3]; }
+      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[5]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -766,6 +1158,12 @@ namespace Moonlapse.Server.Packets {
           break;
         case TypeOneofCase.Chat:
           Chat = other.Chat.Clone();
+          break;
+        case TypeOneofCase.PublicRsaKey:
+          PublicRsaKey = other.PublicRsaKey.Clone();
+          break;
+        case TypeOneofCase.AesKey:
+          AesKey = other.AesKey.Clone();
           break;
       }
 
@@ -814,6 +1212,30 @@ namespace Moonlapse.Server.Packets {
       }
     }
 
+    /// <summary>Field number for the "public_rsa_key" field.</summary>
+    public const int PublicRsaKeyFieldNumber = 4;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Moonlapse.Server.Packets.PublicRSAKeyPacket PublicRsaKey {
+      get { return typeCase_ == TypeOneofCase.PublicRsaKey ? (global::Moonlapse.Server.Packets.PublicRSAKeyPacket) type_ : null; }
+      set {
+        type_ = value;
+        typeCase_ = value == null ? TypeOneofCase.None : TypeOneofCase.PublicRsaKey;
+      }
+    }
+
+    /// <summary>Field number for the "aes_key" field.</summary>
+    public const int AesKeyFieldNumber = 5;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Moonlapse.Server.Packets.AESKeyPacket AesKey {
+      get { return typeCase_ == TypeOneofCase.AesKey ? (global::Moonlapse.Server.Packets.AESKeyPacket) type_ : null; }
+      set {
+        type_ = value;
+        typeCase_ = value == null ? TypeOneofCase.None : TypeOneofCase.AesKey;
+      }
+    }
+
     private object type_;
     /// <summary>Enum of possible cases for the "type" oneof.</summary>
     public enum TypeOneofCase {
@@ -821,6 +1243,8 @@ namespace Moonlapse.Server.Packets {
       Login = 1,
       Register = 2,
       Chat = 3,
+      PublicRsaKey = 4,
+      AesKey = 5,
     }
     private TypeOneofCase typeCase_ = TypeOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -854,6 +1278,8 @@ namespace Moonlapse.Server.Packets {
       if (!object.Equals(Login, other.Login)) return false;
       if (!object.Equals(Register, other.Register)) return false;
       if (!object.Equals(Chat, other.Chat)) return false;
+      if (!object.Equals(PublicRsaKey, other.PublicRsaKey)) return false;
+      if (!object.Equals(AesKey, other.AesKey)) return false;
       if (TypeCase != other.TypeCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -865,6 +1291,8 @@ namespace Moonlapse.Server.Packets {
       if (typeCase_ == TypeOneofCase.Login) hash ^= Login.GetHashCode();
       if (typeCase_ == TypeOneofCase.Register) hash ^= Register.GetHashCode();
       if (typeCase_ == TypeOneofCase.Chat) hash ^= Chat.GetHashCode();
+      if (typeCase_ == TypeOneofCase.PublicRsaKey) hash ^= PublicRsaKey.GetHashCode();
+      if (typeCase_ == TypeOneofCase.AesKey) hash ^= AesKey.GetHashCode();
       hash ^= (int) typeCase_;
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -896,6 +1324,14 @@ namespace Moonlapse.Server.Packets {
         output.WriteRawTag(26);
         output.WriteMessage(Chat);
       }
+      if (typeCase_ == TypeOneofCase.PublicRsaKey) {
+        output.WriteRawTag(34);
+        output.WriteMessage(PublicRsaKey);
+      }
+      if (typeCase_ == TypeOneofCase.AesKey) {
+        output.WriteRawTag(42);
+        output.WriteMessage(AesKey);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -918,6 +1354,14 @@ namespace Moonlapse.Server.Packets {
         output.WriteRawTag(26);
         output.WriteMessage(Chat);
       }
+      if (typeCase_ == TypeOneofCase.PublicRsaKey) {
+        output.WriteRawTag(34);
+        output.WriteMessage(PublicRsaKey);
+      }
+      if (typeCase_ == TypeOneofCase.AesKey) {
+        output.WriteRawTag(42);
+        output.WriteMessage(AesKey);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -936,6 +1380,12 @@ namespace Moonlapse.Server.Packets {
       }
       if (typeCase_ == TypeOneofCase.Chat) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Chat);
+      }
+      if (typeCase_ == TypeOneofCase.PublicRsaKey) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(PublicRsaKey);
+      }
+      if (typeCase_ == TypeOneofCase.AesKey) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(AesKey);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -967,6 +1417,18 @@ namespace Moonlapse.Server.Packets {
             Chat = new global::Moonlapse.Server.Packets.ChatPacket();
           }
           Chat.MergeFrom(other.Chat);
+          break;
+        case TypeOneofCase.PublicRsaKey:
+          if (PublicRsaKey == null) {
+            PublicRsaKey = new global::Moonlapse.Server.Packets.PublicRSAKeyPacket();
+          }
+          PublicRsaKey.MergeFrom(other.PublicRsaKey);
+          break;
+        case TypeOneofCase.AesKey:
+          if (AesKey == null) {
+            AesKey = new global::Moonlapse.Server.Packets.AESKeyPacket();
+          }
+          AesKey.MergeFrom(other.AesKey);
           break;
       }
 
@@ -1012,6 +1474,24 @@ namespace Moonlapse.Server.Packets {
             Chat = subBuilder;
             break;
           }
+          case 34: {
+            global::Moonlapse.Server.Packets.PublicRSAKeyPacket subBuilder = new global::Moonlapse.Server.Packets.PublicRSAKeyPacket();
+            if (typeCase_ == TypeOneofCase.PublicRsaKey) {
+              subBuilder.MergeFrom(PublicRsaKey);
+            }
+            input.ReadMessage(subBuilder);
+            PublicRsaKey = subBuilder;
+            break;
+          }
+          case 42: {
+            global::Moonlapse.Server.Packets.AESKeyPacket subBuilder = new global::Moonlapse.Server.Packets.AESKeyPacket();
+            if (typeCase_ == TypeOneofCase.AesKey) {
+              subBuilder.MergeFrom(AesKey);
+            }
+            input.ReadMessage(subBuilder);
+            AesKey = subBuilder;
+            break;
+          }
         }
       }
     #endif
@@ -1052,6 +1532,24 @@ namespace Moonlapse.Server.Packets {
             }
             input.ReadMessage(subBuilder);
             Chat = subBuilder;
+            break;
+          }
+          case 34: {
+            global::Moonlapse.Server.Packets.PublicRSAKeyPacket subBuilder = new global::Moonlapse.Server.Packets.PublicRSAKeyPacket();
+            if (typeCase_ == TypeOneofCase.PublicRsaKey) {
+              subBuilder.MergeFrom(PublicRsaKey);
+            }
+            input.ReadMessage(subBuilder);
+            PublicRsaKey = subBuilder;
+            break;
+          }
+          case 42: {
+            global::Moonlapse.Server.Packets.AESKeyPacket subBuilder = new global::Moonlapse.Server.Packets.AESKeyPacket();
+            if (typeCase_ == TypeOneofCase.AesKey) {
+              subBuilder.MergeFrom(AesKey);
+            }
+            input.ReadMessage(subBuilder);
+            AesKey = subBuilder;
             break;
           }
         }
