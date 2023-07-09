@@ -1,31 +1,15 @@
 ﻿using Moonlapse.Server.Packets;
 using Moonlapse.Server.Serializers;
-using Moonlapse.Server.Extensions;
 using Moonlapse.Server.Utils;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading.Tasks;
 
 namespace Moonlapse.Server.Tests.Unit.Packets;
 
-public class TestPacketDeliveryService : IDisposable {
-
-    const int Port = 42720;
-
-    NetworkStream ClientStream => clientConnection.GetStream();
-    NetworkStream ServerStream => serverConnection.GetStream();
-
-    readonly TimeSpan timeout = TimeSpan.FromMilliseconds(5000);
+public class TestPacketDeliveryService {
 
     readonly Packet mockLoginPacket;
 
     readonly IPacketDeliveryService packetDeliveryService;
     readonly ISerializerService serializerService;
-
-    readonly TcpListener listener;
-    readonly TcpClient clientConnection;      // acts as the client's connection to the server
-    TcpClient serverConnection;               // acts as the server's connection to the client
-
 
     public TestPacketDeliveryService() {
         // Making the mock packets
@@ -36,15 +20,6 @@ public class TestPacketDeliveryService : IDisposable {
             }
         };
 
-        // create server socket
-        listener = new TcpListener(IPAddress.Loopback, Port);
-
-        // create mock client socket
-        clientConnection = new TcpClient();
-
-        // start connection for each test
-        StartSocketConnection();
-
         // creating the container and injecting services
         // todo: it's probably better to have tests for each implementation of the abstract services, rather than testing the injected implementation
         Container.ConfigureServices();
@@ -52,68 +27,79 @@ public class TestPacketDeliveryService : IDisposable {
         serializerService = Container.ResolveRequired<ISerializerService>();
     }
 
-    /// <summary>
-    /// Tests a single packet sent from client to server
-    /// </summary>
     [Fact]
-    public void TestSinglePacketLoop() {
-        // write login packet from client
+    public void TestSinglePacketReceive() {
+        // write login packet to stream
+        var stream = new MemoryStream();
         var bytes = serializerService.Serialize(mockLoginPacket);
-        ClientStream.Write(bytes);
+        stream.Write(bytes);
+        stream.Position = 0;
 
-        // server read
-        var packet = packetDeliveryService
-            .ReceivePacketAsync(ServerStream)
-            .TimeoutAfter(timeout)
-            .Await()
-            .Result;
+        // read
+        var task = packetDeliveryService.ReceivePacketAsync(stream);
+        task.Wait();
+
+        // assume successful wait
+        var packet = task.Result;
 
         Assert.Equal(mockLoginPacket, packet);
     }
 
-    /// <summary>
-    /// Tests multiple packets being sent immediately from client to server
-    /// </summary>
     [Fact(Skip = "In current state (no message delimiter), service will read an entire byte stream and only parse the first LoginPacket that comes through")]
     public void TestMultiPacketReceive() {
         // write two login packet to stream immediately
+        var stream = new MemoryStream();
         var bytes = serializerService.Serialize(mockLoginPacket);
-        ClientStream.Write(bytes);
-        ClientStream.Write(bytes);
+        stream.Write(bytes);
+        stream.Write(bytes);
+        stream.Position = 0;
 
         // read
-        var packet = packetDeliveryService
-            .ReceivePacketAsync(ServerStream)
-            .TimeoutAfter(timeout)
-            .Await()
-            .Result;
+        var task = packetDeliveryService.ReceivePacketAsync(stream);
+        task.Wait();
 
+        // assume successful wait
+        var packet = task.Result;
         Assert.Equal(mockLoginPacket, packet);
 
         // read second packet
-        packet = packetDeliveryService
-            .ReceivePacketAsync(ServerStream)
-            .TimeoutAfter(timeout)
-            .Await()
-            .Result;
+        task = packetDeliveryService.ReceivePacketAsync(stream);
+        task.Wait();
+
+        // assume second successful wait
+        packet = task.Result;
+        Assert.Equal(mockLoginPacket, packet);
+    }
+
+    [Fact]
+    public void TestPacketSend() {
+        // send the packet to mock stream
+        var stream = new MemoryStream();
+        packetDeliveryService.SendPacketAsync(stream, mockLoginPacket).Wait();
+
+        // test bytes sent can be deserialized into original packet
+        var data = stream.ToArray();
+        var packet = serializerService.Deserialize(data[1..]);
 
         Assert.Equal(mockLoginPacket, packet);
     }
 
-    void StartSocketConnection() {
-        listener.Start();
+    /// <summary>
+    /// Checks if sending and receiving work together
+    /// </summary>
+    [Fact]
+    public void TestPacketLoop() {
+        // send the packet to mock stream
+        var stream = new MemoryStream();
+        packetDeliveryService.SendPacketAsync(stream, mockLoginPacket).Wait();
 
-        var serverTask = listener.AcceptTcpClientAsync();
-        var clientTask = clientConnection.ConnectAsync(IPAddress.Loopback, Port);
+        // resest stream position
+        stream.Position = 0;
 
-        Task.WaitAll(new Task[] { clientTask.TimeoutAfter(timeout), serverTask.TimeoutAfter(timeout) }, timeout);
+        // read stream
+        var packet = Task.Run(() => packetDeliveryService.ReceivePacketAsync(stream)).Result;
 
-        serverConnection = serverTask.Result;
-    }
-
-    public void Dispose() {
-        clientConnection.Close();
-        serverConnection.Close();
-        listener.Stop();
+        // check equality
+        Assert.Equal(mockLoginPacket, packet);
     }
 }
