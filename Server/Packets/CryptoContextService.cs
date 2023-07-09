@@ -8,7 +8,7 @@ using System.Diagnostics;
 using Serilog;
 
 namespace Moonlapse.Server.Packets {
-    public class CryptoContext : ICryptoContext {
+    public class CryptoContextService : ICryptoContextService {
         // The RSA keys should go in the application base directory
         readonly static string keysPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Keys");
         static string? publicKey;
@@ -17,7 +17,7 @@ namespace Moonlapse.Server.Packets {
         byte[]? clientAESPrivateKey;
         RSACryptoServiceProvider serverRSA;
 
-        public CryptoContext() {
+        public CryptoContextService() {
             serverRSA = new RSACryptoServiceProvider(2048);
             serverRSA.ImportFromPem(publicKey);
             serverRSA.ImportFromPem(privateKey);

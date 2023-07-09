@@ -25,7 +25,7 @@ namespace Moonlapse.Server {
         /// </summary>
         readonly IDictionary<Protocol, CircularQueue<Packet>> outboundPacketQueues;
         readonly IPacketDeliveryService packetDeliveryService;
-        readonly ICryptoContext cryptoContext;
+        readonly ICryptoContextService cryptoContext;
         readonly TcpClient client;
         readonly Server server;
 
@@ -33,7 +33,7 @@ namespace Moonlapse.Server {
             this.client = client;
             this.server = server;
             packetDeliveryService = Container.ResolveRequired<IPacketDeliveryService>();
-            cryptoContext = Container.ResolveRequired<ICryptoContext>();
+            cryptoContext = Container.ResolveRequired<ICryptoContextService>();
             ChangeState<EntryState>();
             outboundPacketQueues = new Dictionary<Protocol, CircularQueue<Packet>>();
         }

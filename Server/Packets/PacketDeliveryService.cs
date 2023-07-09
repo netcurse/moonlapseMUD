@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 namespace Moonlapse.Server.Packets {
     public class PacketDeliveryService : IPacketDeliveryService {
         readonly ISerializerService serializerService;
-        readonly ICryptoContext cryptoContext;
+        readonly ICryptoContextService cryptoContext;
         readonly IPacketConfigService packetConfigService;
         
 
-        public PacketDeliveryService(ISerializerService serializerService, ICryptoContext cryptoContext, IPacketConfigService packetConfigService) {
+        public PacketDeliveryService(ISerializerService serializerService, ICryptoContextService cryptoContext, IPacketConfigService packetConfigService) {
             this.serializerService = serializerService;
             this.cryptoContext = cryptoContext;
             this.packetConfigService = packetConfigService;

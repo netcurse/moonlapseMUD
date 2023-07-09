@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Moonlapse.Server.Packets {
-    public interface ICryptoContext {
+    public interface ICryptoContextService {
         void SetClientAESPrivateKey(byte[] key);
         string GetServerRSAPublicKey();
         byte[] AESEncrypt(byte[] plainText);
