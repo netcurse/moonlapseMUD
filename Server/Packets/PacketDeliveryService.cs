@@ -11,10 +11,13 @@ namespace Moonlapse.Server.Packets {
     public class PacketDeliveryService : IPacketDeliveryService {
         readonly ISerializerService serializerService;
         readonly ICryptoContext cryptoContext;
+        readonly IPacketConfigService packetConfigService;
+        
 
-        public PacketDeliveryService(ISerializerService serializerService, ICryptoContext cryptoContext) {
+        public PacketDeliveryService(ISerializerService serializerService, ICryptoContext cryptoContext, IPacketConfigService packetConfigService) {
             this.serializerService = serializerService;
             this.cryptoContext = cryptoContext;
+            this.packetConfigService = packetConfigService;
         }
 
         public async Task<Packet> ReceivePacketAsync(NetworkStream stream) {
@@ -33,7 +36,7 @@ namespace Moonlapse.Server.Packets {
                 throw new SocketClosedException();
             }
             
-            var packetConfig = PacketConfig.FromByte(header[0]);
+            var packetConfig = packetConfigService.FromByte(header[0]);
             data = data[0..dataBytesRead];  // strip trailing empty bytes
 
             if (packetConfig.RSAEncrypted) {
@@ -50,7 +53,7 @@ namespace Moonlapse.Server.Packets {
             config ??= new PacketConfig();
 
             // Ensure the AESEncrypted flag is set on the header if the packet type demands encryption
-            if (PacketConfig.HasFlag(packet, PacketsExtensions.Encrypted)) {
+            if (packetConfigService.HasFlag(config, packet, PacketsExtensions.Encrypted)) {
                 config.AESEncrypted = true;
                 config.RSAEncrypted = false;
             }
