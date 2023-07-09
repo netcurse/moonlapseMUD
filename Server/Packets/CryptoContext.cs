@@ -11,24 +11,14 @@ namespace Moonlapse.Server.Packets {
     public class CryptoContext {
         // The RSA keys should go in the application base directory
         readonly static string keysPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Keys");
+        static string? publicKey;
+        static string? privateKey;
 
         byte[]? clientAESPrivateKey;
         RSACryptoServiceProvider serverRSA;
 
         public CryptoContext() {
             serverRSA = new RSACryptoServiceProvider(2048);
-
-            string publicKey;
-            string privateKey;
-            try {
-                publicKey = File.ReadAllText(Path.Join(keysPath, "public.pem"));
-                privateKey = File.ReadAllText(Path.Join(keysPath, "private.pem"));
-            }
-            catch (IOException e) {
-                Log.Error("Error while reading keys: " + e.Message);
-                Log.Error("Did you generate the RSA KeyPair first (use CryptoContext.GenerateRSAKeyPair())?");
-                throw e;
-            }
             serverRSA.ImportFromPem(publicKey);
             serverRSA.ImportFromPem(privateKey);
         }
@@ -43,8 +33,8 @@ namespace Moonlapse.Server.Packets {
 
         public static void GenerateRSAKeyPair() {
             using var rsa = new RSACryptoServiceProvider(2048);
-            var publicKey = rsa.ExportRSAPublicKeyPem();
-            var privateKey = rsa.ExportRSAPrivateKeyPem();
+            publicKey = rsa.ExportRSAPublicKeyPem();
+            privateKey = rsa.ExportRSAPrivateKeyPem();
 
             // Write the pem files to disk
             var keysDir = Directory.CreateDirectory(keysPath);
