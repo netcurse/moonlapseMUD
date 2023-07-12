@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace Moonlapse.Server.Packets {
     public class PacketDeliveryService : IPacketDeliveryService {
@@ -34,8 +35,8 @@ namespace Moonlapse.Server.Packets {
                 throw new SocketClosedException();
             }
             
-            NetworkingTools.EnsureBigEndian(dataLengthBytes);
-            int dataLengthInt = BitConverter.ToInt32(dataLengthBytes);
+            int dataLengthNetworkOrder = BitConverter.ToInt32(dataLengthBytes);
+            int dataLengthInt = IPAddress.NetworkToHostOrder(dataLengthNetworkOrder);
 
             if (dataLengthInt == 0) {
                 throw new SocketClosedException();
@@ -84,8 +85,8 @@ namespace Moonlapse.Server.Packets {
                 data = cryptoContextService.AESEncrypt(data);
             }
 
-            var dataLength = BitConverter.GetBytes((uint)data.Length);
-            NetworkingTools.EnsureBigEndian(dataLength);
+            int dataLengthNetworkOrder = IPAddress.HostToNetworkOrder(data.Length);
+            byte[] dataLength = BitConverter.GetBytes(dataLengthNetworkOrder);
             
             await stream.WriteAsync(dataLength);
             await stream.WriteAsync(new[] { header });
