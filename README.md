@@ -28,7 +28,7 @@ dotnet run --project Server
 To start the client, run this command from the project's root directory:
 ```bash
 source Client/.venv/bin/activate # (or for Windows: Client\.venv\Scripts\activate)
-python Client
+python -m Client
 ```
 
 ### Making changes to the packets
@@ -57,7 +57,7 @@ pylint-protobuf
 
 Now to actually (re-)generate the C# and Python code defining the packets, run the following command from the project's root directory:
 ```bash
-protoc -I="Shared" --python_out="Client" --mypy_out="Client" --csharp_out="Server/Packets" "packets.proto"
+protoc -I="Shared" --python_out="Client/Packets" --mypy_out="Client/Packets" --csharp_out="Server/Packets" "packets.proto"
 ```
 
 You should see the following files are updated:
@@ -111,3 +111,20 @@ When you send a packet, you can construct a `PacketConfig` to use (this may be u
 The server's RSA key is generated on startup (unless it already exists), and is stored in a `Server/bin/Keys` directory as `public.pem` and `private.pem`. `private.pem` should **never** be shared.
 
 Each client generates its own unique AES private key on startup, and sends it to the server using the `AESKeyPacket` (which is encrypted using the server's RSA public key). The client's server protocol then stores the received and decrypted AES private key in a `CryptoContext` object, which is passed around when sending packets to this protocol.
+
+## Unit tests
+We have tried to write unit tests from the beginning, for both the server and client.
+
+### Server
+The server's tests are written in C# using the `xUnit` framework. They are located in the `Tests/Server` directory, and are contained in a project called 
+`Tests.Unit.csproj` which depends on the main `Server` project. To run the server's unit tests, run the following command from the project's root directory:
+```bash
+dotnet test Tests/Server
+```
+
+### Client
+The client's tests are written in Python using the `unittest` framework. They are located in the `Tests/Client` directory. To run the client's unit tests, run the following command from the project's root directory:
+```bash
+source Client/.venv/bin/activate # (or for Windows: Client\.venv\Scripts\activate)
+python -m Tests.Client
+```
