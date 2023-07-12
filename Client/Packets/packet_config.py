@@ -1,4 +1,4 @@
-import packets_pb2 as pack
+from Client.Packets import packets_pb2 as pack
 
 class PacketConfig:
     

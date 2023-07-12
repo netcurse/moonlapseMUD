@@ -35,6 +35,6 @@
     <Folder Include="Packets\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Server\Server.csproj" />
+    <ProjectReference Include="..\..\Server\Server.csproj" />
   </ItemGroup>
 </Project>

@@ -3,11 +3,11 @@ import sys
 import select
 import threading
 import time
-import packets_pb2 as pack
-from crypto import CryptoContext
 from typing import Optional
 from google.protobuf import message as pb
-from packet_config import PacketConfig
+from Client.Packets.packet_config import PacketConfig
+from Client.Packets import packets_pb2 as pack
+from Client.Packets.crypto import CryptoContext
 
 
 class Client:

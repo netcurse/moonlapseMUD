@@ -1,7 +1,9 @@
 Client/.venv
 Client/__pycache__
+Client/Packets/__pycache__
 Server/bin
 Server/obj
-Tests.Unit/bin
-Tests.Unit/obj
+Tests/Server/bin
+Tests/Server/obj
+Tests/Client/__pycache__
 .vs
