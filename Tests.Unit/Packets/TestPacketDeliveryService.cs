@@ -47,7 +47,7 @@ public class TestPacketDeliveryService {
         // Mock AES key packet
         var clientAes = Aes.Create();
         clientAESPrivateKey = clientAes.Key;
-        cryptoContextService.SetClientAESPrivateKey(clientAESPrivateKey);
+        cryptoContextService.SetClientAESPrivateKey(0, clientAESPrivateKey);
 
         mockAesKeyPacket = new() {
             AesKey = new() {
@@ -101,7 +101,7 @@ public class TestPacketDeliveryService {
         if (config.RSAEncrypted) {
             data = RsaEncrypt(data);
         } else if (config.AESEncrypted) {
-            data = cryptoContextService.AESEncrypt(data);
+            data = cryptoContextService.AESEncrypt(0, data);
         }
 
         stream.WriteByte(header);
@@ -116,7 +116,7 @@ public class TestPacketDeliveryService {
         WritePacketToStream(stream, mockAesKeyPacket);
 
         // read and reconstruct packet
-        var packet = await packetDeliveryService.ReceivePacketAsync(stream);
+        var packet = await packetDeliveryService.ReceivePacketAsync(0, stream);
 
         // tests
         Assert.Equal(mockAesKeyPacket, packet);
@@ -130,7 +130,7 @@ public class TestPacketDeliveryService {
         WritePacketToStream(stream, mockLoginPacket);
 
         // read and reconstruct packet
-        var packet = await packetDeliveryService.ReceivePacketAsync(stream);
+        var packet = await packetDeliveryService.ReceivePacketAsync(0, stream);
 
         // tests
         Assert.Equal(mockLoginPacket, packet);
@@ -148,11 +148,11 @@ public class TestPacketDeliveryService {
         stream.Position = 0;
 
         // read first packet
-        var packet = await packetDeliveryService.ReceivePacketAsync(stream);
+        var packet = await packetDeliveryService.ReceivePacketAsync(0, stream);
         Assert.Equal(mockChatPacket, packet);
 
         // read second packet
-        packet = await packetDeliveryService.ReceivePacketAsync(stream);
+        packet = await packetDeliveryService.ReceivePacketAsync(0, stream);
         Assert.Equal(mockChatPacket, packet);
     }
 
@@ -160,7 +160,7 @@ public class TestPacketDeliveryService {
     public void TestPacketSend() {
         // send the packet to mock stream
         var stream = new MemoryStream();
-        packetDeliveryService.SendPacketAsync(stream, mockChatPacket).Wait();
+        packetDeliveryService.SendPacketAsync(0, stream, mockChatPacket).Wait();
 
         // test bytes sent can be deserialized into original packet
         var data = stream.ToArray();
@@ -176,13 +176,13 @@ public class TestPacketDeliveryService {
     public void TestPacketLoop() {
         // send the packet to mock stream
         var stream = new MemoryStream();
-        packetDeliveryService.SendPacketAsync(stream, mockChatPacket).Wait();
+        packetDeliveryService.SendPacketAsync(0, stream, mockChatPacket).Wait();
 
         // resest stream position
         stream.Position = 0;
 
         // read stream
-        var packet = Task.Run(() => packetDeliveryService.ReceivePacketAsync(stream)).Result;
+        var packet = Task.Run(() => packetDeliveryService.ReceivePacketAsync(0, stream)).Result;
 
         // check equality
         Assert.Equal(mockChatPacket, packet);

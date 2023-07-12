@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace Moonlapse.Server {
     public class Protocol {
+        public int Id { get; private set; }
         public bool Connected { get; private set; }
         public IProtocolState ProtocolState { get; private set; }
 
@@ -36,6 +37,7 @@ namespace Moonlapse.Server {
             cryptoContext = Container.ResolveRequired<ICryptoContextService>();
             ChangeState<EntryState>();
             outboundPacketQueues = new Dictionary<Protocol, CircularQueue<Packet>>();
+            Id = client.Client.Handle.ToInt32();
         }
 
         public async Task StartAsync() {
@@ -103,14 +105,14 @@ namespace Moonlapse.Server {
         }
 
         public void SetAESPrivateKey(byte[] key) {
-            cryptoContext.SetClientAESPrivateKey(key);
-            Log.Debug($"Set protocol {client.Client.Handle}'s AES key");
+            cryptoContext.SetClientAESPrivateKey(Id, key);
+            Log.Debug($"Set protocol {Id}'s AES key");
         }
 
         async Task SendClientAsync(Packet packet, PacketConfig? packetConfig = default) { 
             try {
                 var stream = client.GetStream();
-                await packetDeliveryService.SendPacketAsync(client.GetStream(), packet, packetConfig);
+                await packetDeliveryService.SendPacketAsync(Id, client.GetStream(), packet, packetConfig);
             } catch (InvalidOperationException) {
                 throw new SocketClosedException();
             }
@@ -142,7 +144,7 @@ namespace Moonlapse.Server {
         async Task<Packet> ReadNextPacketAsync() {
             try {
                 var stream = client.GetStream();
-                return await packetDeliveryService.ReceivePacketAsync(client.GetStream());
+                return await packetDeliveryService.ReceivePacketAsync(Id, client.GetStream());
             }
             catch (InvalidOperationException) {
                 throw new SocketClosedException();

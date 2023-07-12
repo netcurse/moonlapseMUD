@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Moonlapse.Server.Packets {
     public interface ICryptoContextService {
-        void SetClientAESPrivateKey(byte[] key);
+        void SetClientAESPrivateKey(int protocolId, byte[] key);
         string GetServerRSAPublicKey();
-        byte[] AESEncrypt(byte[] plainText);
+        byte[] AESEncrypt(int protocolId, byte[] plainText);
         byte[] RSADecrypt(byte[] data);
-        byte[] AESDecrypt(byte[] data);
+        byte[] AESDecrypt(int protocolId, byte[] data);
         void GenerateRSAKeyPair();
     }
 }
