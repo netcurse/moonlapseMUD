@@ -25,28 +25,34 @@ namespace Moonlapse.Server.Packets {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "Cg1wYWNrZXRzLnByb3RvEgdwYWNrZXRzGiBnb29nbGUvcHJvdG9idWYvZGVz",
-            "Y3JpcHRvci5wcm90byIxCgtMb2dpblBhY2tldBIQCgh1c2VybmFtZRgBIAEo",
-            "CRIQCghwYXNzd29yZBgCIAEoCSI0Cg5SZWdpc3RlclBhY2tldBIQCgh1c2Vy",
-            "bmFtZRgBIAEoCRIQCghwYXNzd29yZBgCIAEoCSIrCgpDaGF0UGFja2V0EgwK",
-            "BG5hbWUYASABKAkSDwoHbWVzc2FnZRgCIAEoCSIhChJQdWJsaWNSU0FLZXlQ",
-            "YWNrZXQSCwoDa2V5GAEgASgMIhsKDEFFU0tleVBhY2tldBILCgNrZXkYASAB",
-            "KAwiiAIKBlBhY2tldBIrCgVsb2dpbhgBIAEoCzIULnBhY2tldHMuTG9naW5Q",
-            "YWNrZXRCBPjwBAFIABIxCghyZWdpc3RlchgCIAEoCzIXLnBhY2tldHMuUmVn",
-            "aXN0ZXJQYWNrZXRCBPjwBAFIABIpCgRjaGF0GAMgASgLMhMucGFja2V0cy5D",
-            "aGF0UGFja2V0QgT48AQASAASOwoOcHVibGljX3JzYV9rZXkYBCABKAsyGy5w",
-            "YWNrZXRzLlB1YmxpY1JTQUtleVBhY2tldEIE+PAEAEgAEi4KB2Flc19rZXkY",
-            "BSABKAsyFS5wYWNrZXRzLkFFU0tleVBhY2tldEIE+PAEAUgAQgYKBHR5cGU6",
-            "MQoJZW5jcnlwdGVkEh0uZ29vZ2xlLnByb3RvYnVmLkZpZWxkT3B0aW9ucxiP",
-            "TiABKAhCG6oCGE1vb25sYXBzZS5TZXJ2ZXIuUGFja2V0c2IGcHJvdG8z"));
+            "Y3JpcHRvci5wcm90byIbCghPa1BhY2tldBIPCgdtZXNzYWdlGAEgASgJIhwK",
+            "CkRlbnlQYWNrZXQSDgoGcmVhc29uGAEgASgJIjEKC0xvZ2luUGFja2V0EhAK",
+            "CHVzZXJuYW1lGAEgASgJEhAKCHBhc3N3b3JkGAIgASgJIjQKDlJlZ2lzdGVy",
+            "UGFja2V0EhAKCHVzZXJuYW1lGAEgASgJEhAKCHBhc3N3b3JkGAIgASgJIisK",
+            "CkNoYXRQYWNrZXQSDAoEbmFtZRgBIAEoCRIPCgdtZXNzYWdlGAIgASgJIiEK",
+            "ElB1YmxpY1JTQUtleVBhY2tldBILCgNrZXkYASABKAwiGwoMQUVTS2V5UGFj",
+            "a2V0EgsKA2tleRgBIAEoDCLaAgoGUGFja2V0EiUKAm9rGAEgASgLMhEucGFj",
+            "a2V0cy5Pa1BhY2tldEIE+PAEAEgAEikKBGRlbnkYAiABKAsyEy5wYWNrZXRz",
+            "LkRlbnlQYWNrZXRCBPjwBABIABIrCgVsb2dpbhgDIAEoCzIULnBhY2tldHMu",
+            "TG9naW5QYWNrZXRCBPjwBAFIABIxCghyZWdpc3RlchgEIAEoCzIXLnBhY2tl",
+            "dHMuUmVnaXN0ZXJQYWNrZXRCBPjwBAFIABIpCgRjaGF0GAUgASgLMhMucGFj",
+            "a2V0cy5DaGF0UGFja2V0QgT48AQASAASOwoOcHVibGljX3JzYV9rZXkYBiAB",
+            "KAsyGy5wYWNrZXRzLlB1YmxpY1JTQUtleVBhY2tldEIE+PAEAEgAEi4KB2Fl",
+            "c19rZXkYByABKAsyFS5wYWNrZXRzLkFFU0tleVBhY2tldEIE+PAEAUgAQgYK",
+            "BHR5cGU6MQoJZW5jcnlwdGVkEh0uZ29vZ2xlLnByb3RvYnVmLkZpZWxkT3B0",
+            "aW9ucxiPTiABKAhCG6oCGE1vb25sYXBzZS5TZXJ2ZXIuUGFja2V0c2IGcHJv",
+            "dG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.Reflection.DescriptorReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, new pb::Extension[] { PacketsExtensions.Encrypted }, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.OkPacket), global::Moonlapse.Server.Packets.OkPacket.Parser, new[]{ "Message" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.DenyPacket), global::Moonlapse.Server.Packets.DenyPacket.Parser, new[]{ "Reason" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.LoginPacket), global::Moonlapse.Server.Packets.LoginPacket.Parser, new[]{ "Username", "Password" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.RegisterPacket), global::Moonlapse.Server.Packets.RegisterPacket.Parser, new[]{ "Username", "Password" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.ChatPacket), global::Moonlapse.Server.Packets.ChatPacket.Parser, new[]{ "Name", "Message" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.PublicRSAKeyPacket), global::Moonlapse.Server.Packets.PublicRSAKeyPacket.Parser, new[]{ "Key" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.AESKeyPacket), global::Moonlapse.Server.Packets.AESKeyPacket.Parser, new[]{ "Key" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.Packet), global::Moonlapse.Server.Packets.Packet.Parser, new[]{ "Login", "Register", "Chat", "PublicRsaKey", "AesKey" }, new[]{ "Type" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Moonlapse.Server.Packets.Packet), global::Moonlapse.Server.Packets.Packet.Parser, new[]{ "Ok", "Deny", "Login", "Register", "Chat", "PublicRsaKey", "AesKey" }, new[]{ "Type" }, null, null, null)
           }));
     }
     #endregion
@@ -59,6 +65,384 @@ namespace Moonlapse.Server.Packets {
   }
 
   #region Messages
+  public sealed partial class OkPacket : pb::IMessage<OkPacket>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<OkPacket> _parser = new pb::MessageParser<OkPacket>(() => new OkPacket());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<OkPacket> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[0]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public OkPacket() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public OkPacket(OkPacket other) : this() {
+      message_ = other.message_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public OkPacket Clone() {
+      return new OkPacket(this);
+    }
+
+    /// <summary>Field number for the "message" field.</summary>
+    public const int MessageFieldNumber = 1;
+    private string message_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Message {
+      get { return message_; }
+      set {
+        message_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as OkPacket);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(OkPacket other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Message != other.Message) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Message.Length != 0) hash ^= Message.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Message.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Message);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Message.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Message);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (Message.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Message);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(OkPacket other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Message.Length != 0) {
+        Message = other.Message;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            Message = input.ReadString();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            Message = input.ReadString();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class DenyPacket : pb::IMessage<DenyPacket>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<DenyPacket> _parser = new pb::MessageParser<DenyPacket>(() => new DenyPacket());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<DenyPacket> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[1]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public DenyPacket() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public DenyPacket(DenyPacket other) : this() {
+      reason_ = other.reason_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public DenyPacket Clone() {
+      return new DenyPacket(this);
+    }
+
+    /// <summary>Field number for the "reason" field.</summary>
+    public const int ReasonFieldNumber = 1;
+    private string reason_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Reason {
+      get { return reason_; }
+      set {
+        reason_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as DenyPacket);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(DenyPacket other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Reason != other.Reason) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Reason.Length != 0) hash ^= Reason.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Reason.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Reason);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Reason.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Reason);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (Reason.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Reason);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(DenyPacket other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Reason.Length != 0) {
+        Reason = other.Reason;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            Reason = input.ReadString();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            Reason = input.ReadString();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
   public sealed partial class LoginPacket : pb::IMessage<LoginPacket>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -73,7 +457,7 @@ namespace Moonlapse.Server.Packets {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[0]; }
+      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[2]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -299,7 +683,7 @@ namespace Moonlapse.Server.Packets {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[1]; }
+      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[3]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -525,7 +909,7 @@ namespace Moonlapse.Server.Packets {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[2]; }
+      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[4]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -751,7 +1135,7 @@ namespace Moonlapse.Server.Packets {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[3]; }
+      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[5]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -940,7 +1324,7 @@ namespace Moonlapse.Server.Packets {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[4]; }
+      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[6]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1129,7 +1513,7 @@ namespace Moonlapse.Server.Packets {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[5]; }
+      get { return global::Moonlapse.Server.Packets.PacketsReflection.Descriptor.MessageTypes[7]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1150,6 +1534,12 @@ namespace Moonlapse.Server.Packets {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public Packet(Packet other) : this() {
       switch (other.TypeCase) {
+        case TypeOneofCase.Ok:
+          Ok = other.Ok.Clone();
+          break;
+        case TypeOneofCase.Deny:
+          Deny = other.Deny.Clone();
+          break;
         case TypeOneofCase.Login:
           Login = other.Login.Clone();
           break;
@@ -1176,8 +1566,32 @@ namespace Moonlapse.Server.Packets {
       return new Packet(this);
     }
 
+    /// <summary>Field number for the "ok" field.</summary>
+    public const int OkFieldNumber = 1;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Moonlapse.Server.Packets.OkPacket Ok {
+      get { return typeCase_ == TypeOneofCase.Ok ? (global::Moonlapse.Server.Packets.OkPacket) type_ : null; }
+      set {
+        type_ = value;
+        typeCase_ = value == null ? TypeOneofCase.None : TypeOneofCase.Ok;
+      }
+    }
+
+    /// <summary>Field number for the "deny" field.</summary>
+    public const int DenyFieldNumber = 2;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Moonlapse.Server.Packets.DenyPacket Deny {
+      get { return typeCase_ == TypeOneofCase.Deny ? (global::Moonlapse.Server.Packets.DenyPacket) type_ : null; }
+      set {
+        type_ = value;
+        typeCase_ = value == null ? TypeOneofCase.None : TypeOneofCase.Deny;
+      }
+    }
+
     /// <summary>Field number for the "login" field.</summary>
-    public const int LoginFieldNumber = 1;
+    public const int LoginFieldNumber = 3;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public global::Moonlapse.Server.Packets.LoginPacket Login {
@@ -1189,7 +1603,7 @@ namespace Moonlapse.Server.Packets {
     }
 
     /// <summary>Field number for the "register" field.</summary>
-    public const int RegisterFieldNumber = 2;
+    public const int RegisterFieldNumber = 4;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public global::Moonlapse.Server.Packets.RegisterPacket Register {
@@ -1201,7 +1615,7 @@ namespace Moonlapse.Server.Packets {
     }
 
     /// <summary>Field number for the "chat" field.</summary>
-    public const int ChatFieldNumber = 3;
+    public const int ChatFieldNumber = 5;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public global::Moonlapse.Server.Packets.ChatPacket Chat {
@@ -1213,7 +1627,7 @@ namespace Moonlapse.Server.Packets {
     }
 
     /// <summary>Field number for the "public_rsa_key" field.</summary>
-    public const int PublicRsaKeyFieldNumber = 4;
+    public const int PublicRsaKeyFieldNumber = 6;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public global::Moonlapse.Server.Packets.PublicRSAKeyPacket PublicRsaKey {
@@ -1225,7 +1639,7 @@ namespace Moonlapse.Server.Packets {
     }
 
     /// <summary>Field number for the "aes_key" field.</summary>
-    public const int AesKeyFieldNumber = 5;
+    public const int AesKeyFieldNumber = 7;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public global::Moonlapse.Server.Packets.AESKeyPacket AesKey {
@@ -1240,11 +1654,13 @@ namespace Moonlapse.Server.Packets {
     /// <summary>Enum of possible cases for the "type" oneof.</summary>
     public enum TypeOneofCase {
       None = 0,
-      Login = 1,
-      Register = 2,
-      Chat = 3,
-      PublicRsaKey = 4,
-      AesKey = 5,
+      Ok = 1,
+      Deny = 2,
+      Login = 3,
+      Register = 4,
+      Chat = 5,
+      PublicRsaKey = 6,
+      AesKey = 7,
     }
     private TypeOneofCase typeCase_ = TypeOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1275,6 +1691,8 @@ namespace Moonlapse.Server.Packets {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (!object.Equals(Ok, other.Ok)) return false;
+      if (!object.Equals(Deny, other.Deny)) return false;
       if (!object.Equals(Login, other.Login)) return false;
       if (!object.Equals(Register, other.Register)) return false;
       if (!object.Equals(Chat, other.Chat)) return false;
@@ -1288,6 +1706,8 @@ namespace Moonlapse.Server.Packets {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
+      if (typeCase_ == TypeOneofCase.Ok) hash ^= Ok.GetHashCode();
+      if (typeCase_ == TypeOneofCase.Deny) hash ^= Deny.GetHashCode();
       if (typeCase_ == TypeOneofCase.Login) hash ^= Login.GetHashCode();
       if (typeCase_ == TypeOneofCase.Register) hash ^= Register.GetHashCode();
       if (typeCase_ == TypeOneofCase.Chat) hash ^= Chat.GetHashCode();
@@ -1312,24 +1732,32 @@ namespace Moonlapse.Server.Packets {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (typeCase_ == TypeOneofCase.Login) {
+      if (typeCase_ == TypeOneofCase.Ok) {
         output.WriteRawTag(10);
+        output.WriteMessage(Ok);
+      }
+      if (typeCase_ == TypeOneofCase.Deny) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Deny);
+      }
+      if (typeCase_ == TypeOneofCase.Login) {
+        output.WriteRawTag(26);
         output.WriteMessage(Login);
       }
       if (typeCase_ == TypeOneofCase.Register) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(34);
         output.WriteMessage(Register);
       }
       if (typeCase_ == TypeOneofCase.Chat) {
-        output.WriteRawTag(26);
+        output.WriteRawTag(42);
         output.WriteMessage(Chat);
       }
       if (typeCase_ == TypeOneofCase.PublicRsaKey) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(50);
         output.WriteMessage(PublicRsaKey);
       }
       if (typeCase_ == TypeOneofCase.AesKey) {
-        output.WriteRawTag(42);
+        output.WriteRawTag(58);
         output.WriteMessage(AesKey);
       }
       if (_unknownFields != null) {
@@ -1342,24 +1770,32 @@ namespace Moonlapse.Server.Packets {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (typeCase_ == TypeOneofCase.Login) {
+      if (typeCase_ == TypeOneofCase.Ok) {
         output.WriteRawTag(10);
+        output.WriteMessage(Ok);
+      }
+      if (typeCase_ == TypeOneofCase.Deny) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Deny);
+      }
+      if (typeCase_ == TypeOneofCase.Login) {
+        output.WriteRawTag(26);
         output.WriteMessage(Login);
       }
       if (typeCase_ == TypeOneofCase.Register) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(34);
         output.WriteMessage(Register);
       }
       if (typeCase_ == TypeOneofCase.Chat) {
-        output.WriteRawTag(26);
+        output.WriteRawTag(42);
         output.WriteMessage(Chat);
       }
       if (typeCase_ == TypeOneofCase.PublicRsaKey) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(50);
         output.WriteMessage(PublicRsaKey);
       }
       if (typeCase_ == TypeOneofCase.AesKey) {
-        output.WriteRawTag(42);
+        output.WriteRawTag(58);
         output.WriteMessage(AesKey);
       }
       if (_unknownFields != null) {
@@ -1372,6 +1808,12 @@ namespace Moonlapse.Server.Packets {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
+      if (typeCase_ == TypeOneofCase.Ok) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Ok);
+      }
+      if (typeCase_ == TypeOneofCase.Deny) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Deny);
+      }
       if (typeCase_ == TypeOneofCase.Login) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Login);
       }
@@ -1400,6 +1842,18 @@ namespace Moonlapse.Server.Packets {
         return;
       }
       switch (other.TypeCase) {
+        case TypeOneofCase.Ok:
+          if (Ok == null) {
+            Ok = new global::Moonlapse.Server.Packets.OkPacket();
+          }
+          Ok.MergeFrom(other.Ok);
+          break;
+        case TypeOneofCase.Deny:
+          if (Deny == null) {
+            Deny = new global::Moonlapse.Server.Packets.DenyPacket();
+          }
+          Deny.MergeFrom(other.Deny);
+          break;
         case TypeOneofCase.Login:
           if (Login == null) {
             Login = new global::Moonlapse.Server.Packets.LoginPacket();
@@ -1448,6 +1902,24 @@ namespace Moonlapse.Server.Packets {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
+            global::Moonlapse.Server.Packets.OkPacket subBuilder = new global::Moonlapse.Server.Packets.OkPacket();
+            if (typeCase_ == TypeOneofCase.Ok) {
+              subBuilder.MergeFrom(Ok);
+            }
+            input.ReadMessage(subBuilder);
+            Ok = subBuilder;
+            break;
+          }
+          case 18: {
+            global::Moonlapse.Server.Packets.DenyPacket subBuilder = new global::Moonlapse.Server.Packets.DenyPacket();
+            if (typeCase_ == TypeOneofCase.Deny) {
+              subBuilder.MergeFrom(Deny);
+            }
+            input.ReadMessage(subBuilder);
+            Deny = subBuilder;
+            break;
+          }
+          case 26: {
             global::Moonlapse.Server.Packets.LoginPacket subBuilder = new global::Moonlapse.Server.Packets.LoginPacket();
             if (typeCase_ == TypeOneofCase.Login) {
               subBuilder.MergeFrom(Login);
@@ -1456,7 +1928,7 @@ namespace Moonlapse.Server.Packets {
             Login = subBuilder;
             break;
           }
-          case 18: {
+          case 34: {
             global::Moonlapse.Server.Packets.RegisterPacket subBuilder = new global::Moonlapse.Server.Packets.RegisterPacket();
             if (typeCase_ == TypeOneofCase.Register) {
               subBuilder.MergeFrom(Register);
@@ -1465,7 +1937,7 @@ namespace Moonlapse.Server.Packets {
             Register = subBuilder;
             break;
           }
-          case 26: {
+          case 42: {
             global::Moonlapse.Server.Packets.ChatPacket subBuilder = new global::Moonlapse.Server.Packets.ChatPacket();
             if (typeCase_ == TypeOneofCase.Chat) {
               subBuilder.MergeFrom(Chat);
@@ -1474,7 +1946,7 @@ namespace Moonlapse.Server.Packets {
             Chat = subBuilder;
             break;
           }
-          case 34: {
+          case 50: {
             global::Moonlapse.Server.Packets.PublicRSAKeyPacket subBuilder = new global::Moonlapse.Server.Packets.PublicRSAKeyPacket();
             if (typeCase_ == TypeOneofCase.PublicRsaKey) {
               subBuilder.MergeFrom(PublicRsaKey);
@@ -1483,7 +1955,7 @@ namespace Moonlapse.Server.Packets {
             PublicRsaKey = subBuilder;
             break;
           }
-          case 42: {
+          case 58: {
             global::Moonlapse.Server.Packets.AESKeyPacket subBuilder = new global::Moonlapse.Server.Packets.AESKeyPacket();
             if (typeCase_ == TypeOneofCase.AesKey) {
               subBuilder.MergeFrom(AesKey);
@@ -1508,6 +1980,24 @@ namespace Moonlapse.Server.Packets {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
+            global::Moonlapse.Server.Packets.OkPacket subBuilder = new global::Moonlapse.Server.Packets.OkPacket();
+            if (typeCase_ == TypeOneofCase.Ok) {
+              subBuilder.MergeFrom(Ok);
+            }
+            input.ReadMessage(subBuilder);
+            Ok = subBuilder;
+            break;
+          }
+          case 18: {
+            global::Moonlapse.Server.Packets.DenyPacket subBuilder = new global::Moonlapse.Server.Packets.DenyPacket();
+            if (typeCase_ == TypeOneofCase.Deny) {
+              subBuilder.MergeFrom(Deny);
+            }
+            input.ReadMessage(subBuilder);
+            Deny = subBuilder;
+            break;
+          }
+          case 26: {
             global::Moonlapse.Server.Packets.LoginPacket subBuilder = new global::Moonlapse.Server.Packets.LoginPacket();
             if (typeCase_ == TypeOneofCase.Login) {
               subBuilder.MergeFrom(Login);
@@ -1516,7 +2006,7 @@ namespace Moonlapse.Server.Packets {
             Login = subBuilder;
             break;
           }
-          case 18: {
+          case 34: {
             global::Moonlapse.Server.Packets.RegisterPacket subBuilder = new global::Moonlapse.Server.Packets.RegisterPacket();
             if (typeCase_ == TypeOneofCase.Register) {
               subBuilder.MergeFrom(Register);
@@ -1525,7 +2015,7 @@ namespace Moonlapse.Server.Packets {
             Register = subBuilder;
             break;
           }
-          case 26: {
+          case 42: {
             global::Moonlapse.Server.Packets.ChatPacket subBuilder = new global::Moonlapse.Server.Packets.ChatPacket();
             if (typeCase_ == TypeOneofCase.Chat) {
               subBuilder.MergeFrom(Chat);
@@ -1534,7 +2024,7 @@ namespace Moonlapse.Server.Packets {
             Chat = subBuilder;
             break;
           }
-          case 34: {
+          case 50: {
             global::Moonlapse.Server.Packets.PublicRSAKeyPacket subBuilder = new global::Moonlapse.Server.Packets.PublicRSAKeyPacket();
             if (typeCase_ == TypeOneofCase.PublicRsaKey) {
               subBuilder.MergeFrom(PublicRsaKey);
@@ -1543,7 +2033,7 @@ namespace Moonlapse.Server.Packets {
             PublicRsaKey = subBuilder;
             break;
           }
-          case 42: {
+          case 58: {
             global::Moonlapse.Server.Packets.AESKeyPacket subBuilder = new global::Moonlapse.Server.Packets.AESKeyPacket();
             if (typeCase_ == TypeOneofCase.AesKey) {
               subBuilder.MergeFrom(AesKey);

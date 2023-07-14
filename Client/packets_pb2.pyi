@@ -19,6 +19,36 @@ else:
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 @typing_extensions.final
+class OkPacket(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    MESSAGE_FIELD_NUMBER: builtins.int
+    message: builtins.str
+    def __init__(
+        self,
+        *,
+        message: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["message", b"message"]) -> None: ...
+
+global___OkPacket = OkPacket
+
+@typing_extensions.final
+class DenyPacket(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    REASON_FIELD_NUMBER: builtins.int
+    reason: builtins.str
+    def __init__(
+        self,
+        *,
+        reason: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["reason", b"reason"]) -> None: ...
+
+global___DenyPacket = DenyPacket
+
+@typing_extensions.final
 class LoginPacket(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
@@ -106,11 +136,17 @@ global___AESKeyPacket = AESKeyPacket
 class Packet(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    OK_FIELD_NUMBER: builtins.int
+    DENY_FIELD_NUMBER: builtins.int
     LOGIN_FIELD_NUMBER: builtins.int
     REGISTER_FIELD_NUMBER: builtins.int
     CHAT_FIELD_NUMBER: builtins.int
     PUBLIC_RSA_KEY_FIELD_NUMBER: builtins.int
     AES_KEY_FIELD_NUMBER: builtins.int
+    @property
+    def ok(self) -> global___OkPacket: ...
+    @property
+    def deny(self) -> global___DenyPacket: ...
     @property
     def login(self) -> global___LoginPacket: ...
     @property
@@ -124,15 +160,17 @@ class Packet(google.protobuf.message.Message):
     def __init__(
         self,
         *,
+        ok: global___OkPacket | None = ...,
+        deny: global___DenyPacket | None = ...,
         login: global___LoginPacket | None = ...,
         register: global___RegisterPacket | None = ...,
         chat: global___ChatPacket | None = ...,
         public_rsa_key: global___PublicRSAKeyPacket | None = ...,
         aes_key: global___AESKeyPacket | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["aes_key", b"aes_key", "chat", b"chat", "login", b"login", "public_rsa_key", b"public_rsa_key", "register", b"register", "type", b"type"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["aes_key", b"aes_key", "chat", b"chat", "login", b"login", "public_rsa_key", b"public_rsa_key", "register", b"register", "type", b"type"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["type", b"type"]) -> typing_extensions.Literal["login", "register", "chat", "public_rsa_key", "aes_key"] | None: ...
+    def HasField(self, field_name: typing_extensions.Literal["aes_key", b"aes_key", "chat", b"chat", "deny", b"deny", "login", b"login", "ok", b"ok", "public_rsa_key", b"public_rsa_key", "register", b"register", "type", b"type"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["aes_key", b"aes_key", "chat", b"chat", "deny", b"deny", "login", b"login", "ok", b"ok", "public_rsa_key", b"public_rsa_key", "register", b"register", "type", b"type"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["type", b"type"]) -> typing_extensions.Literal["ok", "deny", "login", "register", "chat", "public_rsa_key", "aes_key"] | None: ...
 
 global___Packet = Packet
 

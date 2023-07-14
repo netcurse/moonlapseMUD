@@ -10,6 +10,14 @@ extend google.protobuf.FieldOptions {
     bool encrypted = 9999;
 }
 
+message OkPacket {
+    string message = 1;
+}
+
+message DenyPacket {
+    string reason = 1;
+}
+
 message LoginPacket {
     string username = 1;
     string password = 2;
@@ -35,10 +43,12 @@ message AESKeyPacket {
 
 message Packet {
     oneof type {
-        LoginPacket login = 1 [(encrypted) = true];
-        RegisterPacket register = 2 [(encrypted) = true];
-        ChatPacket chat = 3 [(encrypted) = false];
-        PublicRSAKeyPacket public_rsa_key = 4 [(encrypted) = false];
-        AESKeyPacket aes_key = 5 [(encrypted) = true];
+        OkPacket ok = 1 [(encrypted) = false];
+        DenyPacket deny = 2 [(encrypted) = false];
+        LoginPacket login = 3 [(encrypted) = true];
+        RegisterPacket register = 4 [(encrypted) = true];
+        ChatPacket chat = 5 [(encrypted) = false];
+        PublicRSAKeyPacket public_rsa_key = 6 [(encrypted) = false];
+        AESKeyPacket aes_key = 7 [(encrypted) = true];
     }
 }

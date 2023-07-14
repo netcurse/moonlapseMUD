@@ -92,6 +92,8 @@ namespace Moonlapse.Server.Packets {
             await stream.WriteAsync(new[] { header });
             await stream.WriteAsync(data);
             await stream.FlushAsync();
+
+            System.Console.WriteLine($"Sent packet. Length: {data.Length}, Header: {header}, Data: {System.Text.Encoding.UTF8.GetString(data)}");
         }
     }
 }
