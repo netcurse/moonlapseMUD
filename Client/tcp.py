@@ -5,33 +5,8 @@ from crypto import CryptoContext
 from typing import Optional
 from google.protobuf import message as pb
 from packet_config import PacketConfig
-from queue import Queue
-import threading
+import select
 
-class SharedNetworkReceiver:
-    def __init__(self, tcp_client):
-        self.tcp_client = tcp_client
-        self.packet_queue = Queue()
-        self.running = False
-        self.thread = threading.Thread(target=self.listen_for_packets)
-
-    def listen_for_packets(self):
-        while self.running:
-            packet = self.tcp_client.receive_packet()
-            self.packet_queue.put(packet)
-
-    def start(self):
-        self.running = True
-        self.thread.start()
-
-    def stop(self):
-        self.running = False
-        self.thread.join()
-
-    def get_packet(self) -> Optional[pack.Packet]:
-        if not self.packet_queue.empty():
-            return self.packet_queue.get()
-        return None
 
 class Client:
     def __init__(self, hostname: str, port: int):
@@ -43,8 +18,9 @@ class Client:
     def start(self, max_attempts: int = 20):
         try:
             self.sock.connect(self.address)
-        except socket.error:
-            raise socket.error("Connection refused by server. Is the server running?")
+        except OSError as e:
+            if e.errno != 115: # EINPROGRESS
+                raise
 
         # Receive the server's RSA public key
         num_tries: int = 0
@@ -74,7 +50,11 @@ class Client:
                     return
         
         raise Exception("Failed to exchange AES key with server (max attempts exceeded)")
-        
+
+    def data_available(self):
+        rlist, _, _ = select.select([self.sock], [], [], 0)
+        return bool(rlist)
+    
     def receive_packet(self) -> Optional[pack.Packet]:
         try:
             # Read the packet length (assuming it's a 4-byte integer)
@@ -84,11 +64,13 @@ class Client:
             # Now read the packet data
             header = self.sock.recv(1)
             data = self.sock.recv(packet_length)
-        except socket.error:
-            if not self.running:
+        except socket.error as e:
+            err = e.args[0]
+            if not self.running or err == 'timed out':
+                # Return None if the TCP client is stopped/stopping or if there is no data to read
                 return None
             else:
-                raise
+                raise e
 
         if len(header) == 0 or len(data) == 0:
             return
