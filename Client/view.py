@@ -56,12 +56,5 @@ class ChatroomView(View):
 
     def draw(self):
         super().draw()
-        # Draw the chat log
-        for i, message in enumerate(self.controller.chat_log):
-            print(self.controller.term.move_y(i) + message)
-
-        # Draw the widgets
         for widget in self.controller.widgets:
             widget.draw()
-
-        print(self.controller.term.move_y(len(self.controller.chat_log) + len(self.controller.widgets)))

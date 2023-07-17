@@ -4,14 +4,10 @@ import widgets
 import packets_pb2 as pack
 import tcp
 import threading
+from input import compare_input
 from blessed import Terminal
 from typing import List, Callable, Optional
 from queue import Queue
-
-def compare_input(user_input, key):
-    if user_input.is_sequence:
-        return user_input.code == key
-    return user_input == key
 
 class Controller:
     def __init__(self, tcp_client: tcp.Client):
@@ -178,8 +174,9 @@ class ChatroomController(MenuController):
     def __init__(self, tcp_client):
         super().__init__(tcp_client)
         self.view = view.ChatroomView(self)
-        self.chat_log = []
-        self.chat_entry_widget = widgets.TextField(self, 'Type your message here')
+        self.chat_log_widget = widgets.TextBox(self)
+        self.chat_entry_widget = widgets.TextField(self, 'Say: ', on_enter_action=self.send_message)
+        self.widgets.append(self.chat_log_widget)
         self.widgets.append(self.chat_entry_widget)
         self.widgets.append(widgets.Button(self, 'Send', self.send_message))
         self.widgets.append(widgets.Button(self, 'Exit', self.exit_chatroom))
@@ -187,7 +184,7 @@ class ChatroomController(MenuController):
     def handle_packet(self, packet: pack.Packet):
         super().handle_packet(packet)
         if packet.HasField("chat"):
-            self.chat_log.append(packet.chat.message)
+            self.chat_log_widget.add_line(packet.chat.message)
         self.view.dirty = True
 
     def send_message(self):
