@@ -25,7 +25,6 @@ class MenuView(View):
         # If no widgets are selected yet, select the first one
         if not any(widget.selected for widget in self.controller.widgets):
             self.controller.widgets[0].selected = True
-        print(self.term.clear)
         print(self.term.center(self.title))
         print(self.term.move_down)
         for widget in self.controller.widgets:

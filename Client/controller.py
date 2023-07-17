@@ -124,8 +124,11 @@ class LoginMenuController(UserMenuController):
         super().__init__(tcp_client)
         self.view = view.LoginMenuView(self)
         self.widgets.append(widgets.CheckBox(self, 'Remember me'))
-        self.widgets.append(widgets.Button(self, 'Login', self.login))
-        self.widgets.append(widgets.Button(self, 'Go back', self.go_back))
+
+        hbox = widgets.HorizontalContainer(self, 8, 8)
+        hbox.add_widget(0, widgets.Button(self, 'Login', self.login))
+        hbox.add_widget(1, widgets.Button(self, 'Go back', self.go_back))
+        self.widgets.append(hbox)
     
     def login(self):
         username = self.username_widget.text
