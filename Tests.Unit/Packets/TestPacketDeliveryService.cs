@@ -4,6 +4,7 @@ using Moonlapse.Server.Utils;
 using System.Security.Cryptography;
 using System.Text;
 using Google.Protobuf;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Moonlapse.Server.Tests.Unit.Packets;
 
@@ -15,6 +16,7 @@ public class TestPacketDeliveryService {
     readonly Packet mockServerRsaPublicKeyPacket;
     readonly Packet mockChatPacket;
 
+    readonly ServiceProvider serviceProvider;
     readonly IPacketDeliveryService packetDeliveryService;
     readonly ISerializerService serializerService;
     readonly ICryptoContextService cryptoContextService;
@@ -22,11 +24,20 @@ public class TestPacketDeliveryService {
     public TestPacketDeliveryService() {
         // creating the container and injecting services
         // todo: it's probably better to have tests for each implementation of the abstract services, rather than testing the injected implementation
-        Container.ConfigureServices();
-        packetDeliveryService = Container.ResolveRequired<IPacketDeliveryService>();
-        serializerService = Container.ResolveRequired<ISerializerService>();
-        cryptoContextService = Container.ResolveRequired<ICryptoContextService>();
-        packetConfigService = Container.ResolveRequired<IPacketConfigService>();
+        
+        var services = new ServiceCollection()
+            .AddSingleton<ISerializerService, ProtobufSerializerService>()
+            .AddSingleton<IPacketDeliveryService, PacketDeliveryService>()
+            .AddSingleton<ICryptoContextService, CryptoContextService>()
+            .AddSingleton<IFlagsCacheService, FlagsCacheService>()
+            .AddSingleton<IPacketConfigService, PacketConfigService>()
+            ;
+        serviceProvider = services.BuildServiceProvider();
+
+        packetDeliveryService = serviceProvider.GetRequiredService<IPacketDeliveryService>();
+        serializerService = serviceProvider.GetRequiredService<ISerializerService>();
+        cryptoContextService = serviceProvider.GetRequiredService<ICryptoContextService>();
+        packetConfigService = serviceProvider.GetRequiredService<IPacketConfigService>();
 
         // Mock login packet
         mockLoginPacket = new() {
