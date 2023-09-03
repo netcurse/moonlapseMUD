@@ -45,18 +45,31 @@ class Client:
         self.stop()
 
     def receive_packet(self) -> pack.Packet:
-        max_buffer_size: int = 1500
-        header: bytes = self.sock.recv(1)
-        data: bytes = self.sock.recv(max_buffer_size - 1)
-
-        if len(header) == 0 or len(data) == 0:
+        # Read the first 4 bytes to get the length of the packet
+        data_length_bytes = self.sock.recv(4)
+        if len(data_length_bytes) == 0:
             raise socket.error("Socket connection broken")
+        data_length_int = int.from_bytes(data_length_bytes, byteorder="big")
+        if data_length_int == 0:
+            raise socket.error("Received a packet with length 0")
+
+        # Read the next byte to get the header, and the rest of the packet (dataLengthInt bytes)
+        header = self.sock.recv(1)
+        if len(header) == 0:
+            raise socket.error("Socket connection broken")
+        data = self.sock.recv(data_length_int)
 
         packet_config = PacketConfig.from_byte(header[0])
         if packet_config.aes_encrypted:
             data = self.crypto_context.aes_decrypt(data)
 
-        packet = pack.Packet.FromString(data)
+        try:
+            packet = pack.Packet.FromString(data)
+        except Exception as e:
+            print("Error deserializing packet")
+            print(e)
+            raise e
+
         return packet
 
     def send_packet(self, packet: pack.Packet, config: Optional[PacketConfig] = None):
@@ -71,7 +84,7 @@ class Client:
         elif packet.HasField("aes_key"):
             config.aes_encrypted = False
             config.rsa_encrypted = True
-        
+
         header: int = config.to_byte()
 
         data: bytes = packet.SerializeToString()
@@ -80,7 +93,8 @@ class Client:
         elif config.aes_encrypted:
             data = self.crypto_context.aes_encrypt(data)
             
-        self.sock.send(header.to_bytes(1, "big") + data)
+        data_length = len(data).to_bytes(4, byteorder="big")
+        self.sock.send(data_length + header.to_bytes(1, byteorder="big") + data)
 
     def read(self):
         while self.running:

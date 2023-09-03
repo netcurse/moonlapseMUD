@@ -104,6 +104,9 @@ public class TestPacketDeliveryService {
             data = cryptoContextService.AESEncrypt(0, data);
         }
 
+        var dataLength = BitConverter.GetBytes((uint)data.Length);
+        NetworkingTools.EnsureBigEndian(dataLength);
+        stream.Write(dataLength);
         stream.WriteByte(header);
         stream.Write(data);
         stream.Position = 0;
@@ -138,13 +141,24 @@ public class TestPacketDeliveryService {
         Assert.Equal("123", packet.Login.Password);
     }
 
-    [Fact(Skip = "In current state (no message delimiter), service will read an entire byte stream and only parse the first LoginPacket that comes through")]
+    [Fact]
     public async void TestMultiPacketReceive() {
         // write two login packet to stream immediately
         var stream = new MemoryStream();
-        var bytes = serializerService.Serialize(mockChatPacket);
-        stream.Write(bytes);
-        stream.Write(bytes);
+
+        var header = new PacketConfig().ToByte();
+        var data = serializerService.Serialize(mockChatPacket);
+        var dataLength = BitConverter.GetBytes((uint)data.Length);
+        NetworkingTools.EnsureBigEndian(dataLength);
+
+        stream.Write(dataLength);
+        stream.WriteByte(header);
+        stream.Write(data);
+
+        stream.Write(dataLength);
+        stream.WriteByte(header);
+        stream.Write(data);
+
         stream.Position = 0;
 
         // read first packet
@@ -164,7 +178,7 @@ public class TestPacketDeliveryService {
 
         // test bytes sent can be deserialized into original packet
         var data = stream.ToArray();
-        var packet = serializerService.Deserialize(data[1..]);
+        var packet = serializerService.Deserialize(data[5..]);  // skip the data length (4 bytes) and header byte
 
         Assert.Equal(mockChatPacket, packet);
     }
