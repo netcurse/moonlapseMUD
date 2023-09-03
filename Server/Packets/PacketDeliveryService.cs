@@ -21,7 +21,7 @@ namespace Moonlapse.Server.Packets {
             this.packetConfigService = packetConfigService;
         }
 
-        public async Task<Packet> ReceivePacketAsync(Stream stream) {
+        public async Task<Packet> ReceivePacketAsync(int receivingProtocolId, Stream stream) {
             // Read the first 4 bytes to get the length of the packet
             var dataLengthBytes = new byte[4]; // 4 bytes for 32-bit unsigned int
             int dataLengthBytesRead;

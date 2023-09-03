@@ -1,6 +1,5 @@
 ﻿using Moonlapse.Server.Packets;
 using Moonlapse.Server.Serializers;
-using Moonlapse.Server.Utils;
 using System.Security.Cryptography;
 using System.Text;
 using Google.Protobuf;
@@ -116,7 +115,6 @@ public class TestPacketDeliveryService {
         }
 
         var dataLength = BitConverter.GetBytes((uint)data.Length);
-        NetworkingTools.EnsureBigEndian(dataLength);
         stream.Write(dataLength);
         stream.WriteByte(header);
         stream.Write(data);
@@ -160,7 +158,6 @@ public class TestPacketDeliveryService {
         var header = new PacketConfig().ToByte();
         var data = serializerService.Serialize(mockChatPacket);
         var dataLength = BitConverter.GetBytes((uint)data.Length);
-        NetworkingTools.EnsureBigEndian(dataLength);
 
         stream.Write(dataLength);
         stream.WriteByte(header);
