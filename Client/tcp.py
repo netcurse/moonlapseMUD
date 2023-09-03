@@ -1,4 +1,6 @@
 import socket
+import sys
+import select
 import threading
 import time
 import packets_pb2 as pack
@@ -14,15 +16,33 @@ class Client:
         self.running: bool = False
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.read_thread = threading.Thread(target=self.read)
-        self.write_thread = threading.Thread(target=self.write)
+        self.write_thread = threading.Thread(target=self.write, daemon=True)
         self.username: str = input("Please enter your name: ")
         self.crypto_context: CryptoContext = CryptoContext()
 
     def start(self):
-        self.sock.connect(self.address)
+        try:
+            self.sock.connect(self.address)
+        except ConnectionRefusedError:
+            print("Connection refused by server. Is the server running?")
+            return
+        except Exception as e:
+            print("Error connecting to server")
+            print(e)
+            return
+        
         self.running = True
         self.read_thread.start()
         self.write_thread.start()
+        try:
+            while self.running:
+                time.sleep(0.1)
+        except KeyboardInterrupt:
+            print("Keyboard interrupt received, stopping...")
+            self.running = False
+            self.write_thread.join() # Wait for the writing thread to finish
+
+        self.stop()
 
     def receive_packet(self) -> pack.Packet:
         max_buffer_size: int = 1500
@@ -64,6 +84,9 @@ class Client:
 
     def read(self):
         while self.running:
+            ready_to_read, _, _ = select.select([self.sock], [], [], 0.5) # timeout after 0.5 seconds
+            if not ready_to_read:
+                continue
             try:
                 packet = self.receive_packet()
 
@@ -85,22 +108,34 @@ class Client:
                     print("Received a register packet")
                 else:
                     print("Got unknown data?")
+
+            except ConnectionResetError:
+                print("Connection closed by server")
+                self.running = False
             except Exception as e:
+                if not self.running:
+                    return
                 print("Error receiving data")
                 print(e)
-                self.stop()
-        
+                self.running = False
+
     def write(self):
         while self.running:
+            packet = pack.Packet()
+            packet.chat.name = self.username
             try:
-                packet = pack.Packet()
-                packet.chat.name = self.username
                 packet.chat.message = input()
+            except EOFError:
+                self.running = False
+                return
+
+            try:
                 self.send_packet(packet)
             except Exception as e:
-                print("Error receiving data")
+                print("Error sending data")
                 print(e)
-                self.stop()
+                self.running = False
+                return
 
     def login(self):
         login_packet = pack.Packet()
@@ -112,5 +147,3 @@ class Client:
         self.running = False
         self.sock.close()
         print("TCP client is stopping...")
-        self.write_thread.join()
-        self.read_thread.join()

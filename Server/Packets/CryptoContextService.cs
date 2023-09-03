@@ -14,15 +14,15 @@ namespace Moonlapse.Server.Packets {
         string? publicKey;
         string? privateKey;
 
-        byte[]? clientAESPrivateKey;
+        Dictionary<int, byte[]> aesKeys = new Dictionary<int, byte[]>();
         RSACryptoServiceProvider serverRSA;
 
         public CryptoContextService() {
             serverRSA = new RSACryptoServiceProvider(2048);
         }
 
-        public void SetClientAESPrivateKey(byte[] key) {
-            clientAESPrivateKey = key;
+        public void SetClientAESPrivateKey(int protocolId, byte[] key) {
+            aesKeys[protocolId] = key;
         }
 
         public string GetServerRSAPublicKey() {
@@ -43,13 +43,13 @@ namespace Moonlapse.Server.Packets {
             File.WriteAllText(Path.Join(keysPath, "private.pem"), privateKey);
         }
 
-        public byte[] AESEncrypt(byte[] plainText) {
-            if (clientAESPrivateKey is null) {
-                throw new Exception("Client AES Private Key not set");
+        public byte[] AESEncrypt(int protocolId, byte[] plainText) {
+            if (!aesKeys.ContainsKey(protocolId)) {
+                throw new Exception($"AES key for protocol {protocolId} not set");
             }
             
             using (var aes = Aes.Create()) {
-                aes.Key = clientAESPrivateKey;
+                aes.Key = aesKeys[protocolId];
                 ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
 
                 using (var memStream = new MemoryStream()) {
@@ -68,13 +68,13 @@ namespace Moonlapse.Server.Packets {
             return serverRSA.Decrypt(data, true);
         }
 
-        public byte[] AESDecrypt(byte[] data) {
-            if (clientAESPrivateKey is null) {
-                throw new Exception("Client AES Private Key not set");
+        public byte[] AESDecrypt(int protocolId, byte[] data) {
+            if (!aesKeys.ContainsKey(protocolId)) {
+                throw new Exception($"AES key for protocol {protocolId} not set");
             }
             
             using (var aes = Aes.Create()) {
-                aes.Key = clientAESPrivateKey;
+                aes.Key = aesKeys[protocolId];
 
                 // The first part of the data is the initialisation vector (IV)
                 var iv = new byte[aes.IV.Length];

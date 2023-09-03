@@ -12,7 +12,7 @@ namespace Moonlapse.Server.Packets {
         readonly ISerializerService serializerService;
         readonly ICryptoContextService cryptoContextService;
         readonly IPacketConfigService packetConfigService;
-        
+
 
         public PacketDeliveryService(ISerializerService serializerService, ICryptoContextService cryptoContext, IPacketConfigService packetConfigService) {
             this.serializerService = serializerService;
@@ -20,7 +20,7 @@ namespace Moonlapse.Server.Packets {
             this.packetConfigService = packetConfigService;
         }
 
-        public async Task<Packet> ReceivePacketAsync(NetworkStream stream) {
+        public async Task<Packet> ReceivePacketAsync(int receivingProtocolId, Stream stream) {
             var maxBufferSize = 1500;
             var header = new byte[1];
             int headerBytesRead;
@@ -29,27 +29,29 @@ namespace Moonlapse.Server.Packets {
             try {
                 headerBytesRead = await stream.ReadAsync(header, 0, 1);
                 dataBytesRead = await stream.ReadAsync(data, 0, maxBufferSize - 1);
-            } catch (IOException) {
+            }
+            catch (IOException) {
                 throw new SocketClosedException();
             }
             if (headerBytesRead == 0 || dataBytesRead == 0) {
                 throw new SocketClosedException();
             }
-            
+
             var packetConfig = packetConfigService.FromByte(header[0]);
             data = data[0..dataBytesRead];  // strip trailing empty bytes
 
             if (packetConfig.RSAEncrypted) {
                 data = cryptoContextService.RSADecrypt(data);
-            } else if (packetConfig.AESEncrypted) {
-                data = cryptoContextService.AESDecrypt(data);
+            }
+            else if (packetConfig.AESEncrypted) {
+                data = cryptoContextService.AESDecrypt(receivingProtocolId, data);
             }
 
             var packet = serializerService.Deserialize(data);
             return packet;
         }
 
-        public async Task SendPacketAsync(NetworkStream stream, Packet packet, PacketConfig? config = default) {
+        public async Task SendPacketAsync(int sendingProtocolId, Stream stream, Packet packet, PacketConfig? config = default) {
             config ??= new PacketConfig();
 
             // Ensure the AESEncrypted flag is set on the header if the packet type demands encryption
@@ -59,10 +61,10 @@ namespace Moonlapse.Server.Packets {
             }
 
             var header = config.ToByte();
-            
+
             var data = serializerService.Serialize(packet);
             if (config.AESEncrypted) {
-                data = cryptoContextService.AESEncrypt(data);
+                data = cryptoContextService.AESEncrypt(sendingProtocolId, data);
             }
 
             await stream.WriteAsync(new[] { header });

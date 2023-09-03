@@ -48,14 +48,16 @@ message Packet {
 ```
 The `AESKeyPacket` is marked as encrypted, although this is understood to be a special case where the client uses the server's RSA public key to send its own AES private key. **Do not change the encryption status of this packet**.
 
-Every time you make a change to one of the packets in `packets.proto`, you need to run `protoc` to generate the C# and Python code. 
+Every time you make a change to one of the packets in `packets.proto`, you need to run `protoc` to generate the C# and Python code.
 To get this set up initially, make sure you have the following pip packages installed (you should if you ran `pip install -r requirements.txt` as per above):
 ```
 mypy-protobuf
 pylint-protobuf
 ```
 
-Now to actually (re-)generate the C# and Python code defining the packets, run the following command from the project's root directory:
+Also, download the `protoc` compiler from [here](https://github.com/protocolbuffers/protobuf/releases) and add it to your PATH. If you don't want to add it to your PATH, you can put it inside the `Client/.venv/bin` directory (or `Client\.venv\Scripts` for Windows) and it will be found automatically when you run the following command (if you have activated the virtual environment as per above).
+
+Now to actually (re-)generate the C# and Python code defining the packets, run the following command from the project's root directory, ensuring that you have activated the virtual environment as per above:
 ```bash
 protoc -I="Shared" --python_out="Client" --mypy_out="Client" --csharp_out="Server/Packets" "packets.proto"
 ```
@@ -108,6 +110,8 @@ Packets are sent with a corresponding `PacketConfig` object. The `PacketConfig` 
 When you send a packet, you can construct a `PacketConfig` to use (this may be useful if you want to communicate other properties of the packet), but ultimately, the server will set the appropriate encryption bits in the header for you, depending on the `encrypted` flag of the packet's definition in `packets.proto`.
 
 ### A note on encryption
-The server's RSA key is generated on startup (unless it already exists), and is stored in a `Server/bin/Keys` directory as `public.pem` and `private.pem`. `private.pem` should **never** be shared.
+The server's RSA key is generated on startup (unless it already exists), and is stored in the server's memory. It is also kept in a `Server/bin/Keys` directory as `public.pem` and `private.pem` for debugging purposes. 
+> ⚠️ Note that `private.pem` should **never** be shared.
 
-Each client generates its own unique AES private key on startup, and sends it to the server using the `AESKeyPacket` (which is encrypted using the server's RSA public key). The client's server protocol then stores the received and decrypted AES private key in a `CryptoContext` object, which is passed around when sending packets to this protocol.
+Each client generates its own unique AES private key on startup, and sends it to the server using the `AESKeyPacket` (which is encrypted using the server's RSA public key). The client's server protocol then stores the received and decrypted AES private key in the `CryptoContextService`. 
+You don't have to worry about this, as the `CryptoContextService` is injected into the server's protocol, and is used to encrypt and decrypt packets.
