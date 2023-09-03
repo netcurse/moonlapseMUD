@@ -19,9 +19,46 @@ pip install -r Client/requirements.txt
 ```
 
 ### Run the server
+#### 1. Create `appsettings.json`
+
+if it doesn't already exist, create an `appsettings.json` file in the root of the Server project, pointing to where your `moonlapse.db` exists (ensure it does exist, just create an empty file called `moonlapse.db`):
+
+```json
+{
+  "ConnectionStrings": {
+    "MoonlapseDatabase": "Data Source=moonlapse.db"
+  }
+}
+```
+
+Ensure the `appsettings.json` file is set to copy to the output directory:
+
+* Right-click on the `appsettings.json` file in Visual Studio (or your IDE of choice).
+* Select 'Properties'.
+* Set "Copy to Output Directory" to "Copy if newer".
+
+#### 2. Install the necessary tool
+If you haven't already, ensure that the necessary EF Core tools and packages are installed:
+```bash
+$ dotnet tool install --global dotnet-ef
+```
+
+#### 3. Set up migrations
+Navigate to the directory of your server project (where the `.csproj` file is located) and run the following command to create an initial migration:
+```bash
+$ dotnet ef migrations add InitialMigration -o Data/Migrations
+```
+
+#### 4. Apply migrations
+This command will create the necessary tables in your SQLite database:
+```bash
+$ dotnet ef database update
+```
+
+#### 5. Run the server
 To start the server, run this command from the project's root directory:
 ```bash
-dotnet run --project Server
+$ dotnet run --project Server
 ```
 
 ### Run the client

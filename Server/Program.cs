@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Moonlapse.Server.Data.DbContexts;
 using Moonlapse.Server.Packets;
 using Moonlapse.Server.Serializers;
 using Moonlapse.Server.Utils;
@@ -9,6 +12,7 @@ using System.Collections.Generic;
 namespace Moonlapse.Server {
     public class Program {
         static ServiceProvider? serviceProvider;
+        static IConfigurationRoot? Configuration { get; set; }
 
         static async Task Main(string[] args) {
             ConfigureServices();
@@ -18,6 +22,12 @@ namespace Moonlapse.Server {
                 .MinimumLevel.Debug()
                 .CreateLogger();
             Log.Information("Logger has been initialized.");
+
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json");
+
+            Configuration = builder.Build();
 
             var server = serviceProvider!.GetRequiredService<Server>();
             await server.StartAsync();
@@ -32,6 +42,8 @@ namespace Moonlapse.Server {
                 .AddSingleton<IPacketConfigService, PacketConfigService>()
                 .AddSingleton<ProtocolFactory>()
                 .AddSingleton<Server>()
+                .AddDbContext<MoonlapseDbContext>(options =>
+                    options.UseSqlite(Configuration!.GetConnectionString("MoonlapseDatabase")))
                 ;
 
             serviceProvider = services.BuildServiceProvider();

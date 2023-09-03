@@ -5,3 +5,6 @@ Server/obj
 Tests.Unit/bin
 Tests.Unit/obj
 .vs
+moonlapse.db
+appsettings.json
+Migrations/
