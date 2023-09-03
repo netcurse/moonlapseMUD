@@ -17,9 +17,11 @@ using System.Threading.Tasks;
 
 namespace Moonlapse.Server {
     public class Protocol {
-        public int Id { get; private set; }
+        public int Id => client.Client.Handle.ToInt32();
         public bool Connected { get; private set; }
         public IProtocolState ProtocolState { get; private set; }
+
+        NetworkStream clientStream => client.GetStream();
 
         /// <summary>
         /// A collection of queues sent from this protocol, organised in a dictionary whose keys are the receiving protocols.
@@ -30,14 +32,13 @@ namespace Moonlapse.Server {
         readonly TcpClient client;
         readonly Server server;
 
-        public Protocol(TcpClient client, Server server) {
+        public Protocol(TcpClient client, Server server, IPacketDeliveryService packetDeliveryService, ICryptoContextService cryptoContext) {
             this.client = client;
             this.server = server;
-            packetDeliveryService = Container.ResolveRequired<IPacketDeliveryService>();
-            cryptoContext = Container.ResolveRequired<ICryptoContextService>();
+            this.packetDeliveryService = packetDeliveryService;
+            this.cryptoContext = cryptoContext;
             ChangeState<EntryState>();
             outboundPacketQueues = new Dictionary<Protocol, CircularQueue<Packet>>();
-            Id = client.Client.Handle.ToInt32();
         }
 
         public async Task StartAsync() {
@@ -89,7 +90,7 @@ namespace Moonlapse.Server {
                 outboundPacketQueues.Add(recipient, new CircularQueue<Packet>(10)); // Each queue has a max size of 10 (rolls over) to avoid spamming
                 outboundPacketQueues[recipient].Enqueue(packet);
             }
-            Log.Debug($"{client.Client.Handle} queued a {packet.TypeCase} packet for protocol {recipient.client.Client.Handle} while in the {ProtocolState.GetType()} state");
+            Log.Debug($"{Id} queued a {packet.TypeCase} packet for protocol {recipient.Id} while in the {ProtocolState.GetType()} state");
         }
 
         /// <summary>
@@ -111,8 +112,7 @@ namespace Moonlapse.Server {
 
         async Task SendClientAsync(Packet packet, PacketConfig? packetConfig = default) { 
             try {
-                var stream = client.GetStream();
-                await packetDeliveryService.SendPacketAsync(Id, client.GetStream(), packet, packetConfig);
+                await packetDeliveryService.SendPacketAsync(Id, clientStream, packet, packetConfig);
             } catch (InvalidOperationException) {
                 throw new SocketClosedException();
             }
@@ -143,8 +143,7 @@ namespace Moonlapse.Server {
 
         async Task<Packet> ReadNextPacketAsync() {
             try {
-                var stream = client.GetStream();
-                return await packetDeliveryService.ReceivePacketAsync(Id, client.GetStream());
+                return await packetDeliveryService.ReceivePacketAsync(Id, clientStream);
             }
             catch (InvalidOperationException) {
                 throw new SocketClosedException();

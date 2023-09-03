@@ -23,13 +23,18 @@ namespace Moonlapse.Server {
 
         readonly TcpListener listener;
 
-        public Server() {
+        readonly ICryptoContextService cryptoContext;
+        readonly ProtocolFactory protocolFactory;
+
+        public Server(ICryptoContextService cryptoContext, ProtocolFactory protocolFactory) {
+            this.cryptoContext = cryptoContext;
+            this.protocolFactory = protocolFactory;
             listener = new(IPAddress.Any, Port);
             ConnectedProtocols = new HashSet<Protocol>();
         }
 
         public async Task StartAsync() {
-            Container.ResolveRequired<ICryptoContextService>().GetServerRSAPublicKey();
+            cryptoContext.GetServerRSAPublicKey();
             listener.Start();
             Log.Information($"Started listening on port {Port}");
 
@@ -43,7 +48,7 @@ namespace Moonlapse.Server {
                 var client = await listener.AcceptTcpClientAsync();
                 Log.Information($"New connection! {client.Client.Handle}");
 
-                var protocol = new Protocol(client, this);
+                var protocol = protocolFactory.Create(client, this);
                 ConnectedProtocols.Add(protocol);
                 Task.Run(protocol.StartAsync);
             }
